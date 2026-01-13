@@ -1,0 +1,167 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 210 100% 20%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 210 100% 20%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 100% 20%;
+
+    --primary: 210 100% 20%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 42 52% 77%;
+    --secondary-foreground: 210 100% 20%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 42 52% 77%;
+    --accent-foreground: 210 100% 20%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 210 100% 20%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 210 100% 10%;
+    --foreground: 0 0% 98%;
+
+    --card: 210 100% 10%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 210 100% 10%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 0% 98%;
+    --primary-foreground: 210 100% 20%;
+
+    --secondary: 42 52% 77%;
+    --secondary-foreground: 210 100% 20%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 42 52% 77%;
+    --accent-foreground: 210 100% 20%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+/* Custom MDX prose styles */
+.prose-navy {
+  max-width: none;
+  color: #001429;
+}
+
+.prose-navy h1,
+.prose-navy h2,
+.prose-navy h3,
+.prose-navy h4,
+.prose-navy h5,
+.prose-navy h6 {
+  color: #000a14;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.prose-navy h1 { font-size: 2.25em; margin-top: 0; margin-bottom: 0.8888889em; }
+.prose-navy h2 { font-size: 1.5em; margin-top: 2em; margin-bottom: 1em; }
+.prose-navy h3 { font-size: 1.25em; margin-top: 1.6em; margin-bottom: 0.6em; }
+
+.prose-navy p {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+  line-height: 1.75;
+}
+
+.prose-navy a {
+  color: #003366;
+  text-decoration: underline;
+  font-weight: 500;
+}
+
+.prose-navy a:hover {
+  color: #002952;
+}
+
+.prose-navy strong {
+  color: #000a14;
+  font-weight: 600;
+}
+
+.prose-navy ul,
+.prose-navy ol {
+  margin-top: 1.25em;
+  margin-bottom: 1.25em;
+  padding-left: 1.625em;
+}
+
+.prose-navy li {
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.prose-navy blockquote {
+  font-style: italic;
+  border-left: 4px solid #e9d8a0;
+  padding-left: 1em;
+  margin: 1.6em 0;
+  color: #001429;
+}
+
+.prose-navy code {
+  color: #000a14;
+  background-color: #f5f5f5;
+  padding: 0.2em 0.4em;
+  border-radius: 0.25em;
+  font-size: 0.875em;
+}
+
+.prose-navy pre {
+  background-color: #f5f5f5;
+  padding: 1em;
+  border-radius: 0.5em;
+  overflow-x: auto;
+  margin: 1.5em 0;
+}
+
+.prose-navy pre code {
+  background-color: transparent;
+  padding: 0;
+}

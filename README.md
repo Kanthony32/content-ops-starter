@@ -1,54 +1,229 @@
-# Netlify Content Ops Starter 
+# The Westview Group
 
-![Content Ops Starter](https://assets.stackbit.com/docs/content-ops-starter-thumb.png)
+A production-ready Next.js 14+ website featuring a premium editorial design, built with TypeScript, TailwindCSS, shadcn/ui, and MDX content management.
 
-Netlify starter that's made for customization with a flexible content model, component library, [visual editing](https://docs.netlify.com/visual-editor/overview/) and [Git Content Source](https://docs.netlify.com/create/content-sources/git/).
+## Features
 
-**⚡ View demo:** [https://content-ops-starter.netlify.app/](https://content-ops-starter.netlify.app/)
+- **Next.js 14+ App Router**: Modern React framework with server components
+- **TypeScript**: Full type safety across the application
+- **TailwindCSS**: Utility-first CSS with custom brand colors
+- **shadcn/ui**: High-quality, accessible UI components
+- **MDX Content**: Local MDX files for blog posts and case studies
+- **SEO Optimized**: Metadata, OpenGraph, sitemap, and robots.txt
+- **Mobile-First Design**: Responsive and accessible (WCAG-minded)
+- **Premium Aesthetic**: Clean, editorial design with navy and gold brand colors
 
-## Deploying to Netlify
+## Brand Identity
 
-If you click "Deploy to Netlify" button, it will create a new repo for you that looks exactly like this one, and sets that repo up immediately for deployment on Netlify.
+- **Primary Colors**: Deep navy (#003366), Gold (#e9d8a0), White
+- **Typography**: Montserrat via next/font/google with system font fallbacks
+- **Design Language**: Clean, premium, editorial
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/netlify-templates/content-ops-starter)
+## Tech Stack
 
-## Develop with Netlify Visual Editor Locally
+- Next.js 14.2.5
+- React 18
+- TypeScript 5
+- TailwindCSS 3
+- MDX for content
+- Lucide React for icons
+- next/font for optimized fonts
 
-The typical development process is to begin by working locally. Clone this repository, then run `npm install` in its root directory.
+## Getting Started
 
-Run the Next.js development server:
+### Prerequisites
 
-```txt
+- Node.js 18+ and npm
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone <repository-url>
 cd content-ops-starter
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Run the development server:
+```bash
 npm run dev
 ```
 
-Install the [Netlify Visual Editor CLI](https://www.npmjs.com/package/@stackbit/cli). Then open a new terminal window in the same project directory and run the Netlify visual editor dev server:
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-```txt
-npm install -g @stackbit/cli
-stackbit dev
+## Development
+
+### Available Scripts
+
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm start` - Start production server
+- `npm run lint` - Run ESLint
+
+### Project Structure
+
+```
+├── app/                    # Next.js App Router pages
+│   ├── layout.tsx         # Root layout with nav + footer
+│   ├── page.tsx           # Home page
+│   ├── about/             # About page
+│   ├── services/          # Services page
+│   ├── work/              # Work listing & case studies
+│   ├── insights/          # Insights listing & blog posts
+│   ├── contact/           # Contact page
+│   ├── privacy/           # Privacy policy
+│   ├── terms/             # Terms of service
+│   ├── sitemap.ts         # Sitemap generator
+│   └── robots.ts          # Robots.txt generator
+├── components/
+│   ├── ui/                # shadcn/ui components
+│   └── layout/            # Header, footer, navigation
+├── content/
+│   ├── work/              # Case study MDX files
+│   └── insights/          # Blog post MDX files
+├── lib/
+│   ├── utils.ts           # Utility functions
+│   ├── mdx.ts             # MDX content utilities
+│   └── seo.ts             # SEO helpers
+└── config/
+    └── site.ts            # Site configuration
 ```
 
-This outputs your own Netlify visual editor URL. Open this, register, or sign in, and you will be directed to Netlify's visual editor for your new project.
+### Adding Content
 
-![Next.js Dev + Visual Editor Dev](https://assets.stackbit.com/docs/next-dev-stackbit-dev.png)
+#### Blog Posts (Insights)
 
-## Building for production
+Create a new MDX file in `content/insights/`:
 
-To build a static site for production, run the following command
+```mdx
+---
+title: "Your Article Title"
+description: "Brief description for SEO and previews"
+date: "2026-01-15"
+author: "Author Name"
+category: "Category"
+tags: ["Tag1", "Tag2"]
+---
 
-```shell
+Your content here...
+```
+
+#### Case Studies (Work)
+
+Create a new MDX file in `content/work/`:
+
+```mdx
+---
+title: "Project Title"
+description: "Brief project description"
+date: "2026-01-15"
+category: "Industry"
+tags: ["Service1", "Service2"]
+---
+
+Your case study content...
+```
+
+### Customizing Styles
+
+- **Colors**: Edit `tailwind.config.ts` to modify brand colors
+- **Typography**: Update font in `app/layout.tsx`
+- **Global Styles**: Modify `app/globals.css`
+
+### SEO Configuration
+
+Update site metadata in `config/site.ts`:
+
+```typescript
+export const siteConfig = {
+  name: "Your Company",
+  description: "Your description",
+  url: "https://yoursite.com",
+  // ... other settings
+}
+```
+
+## Building for Production
+
+1. Build the site:
+```bash
 npm run build
 ```
 
-## Next Steps
+2. Test the production build:
+```bash
+npm start
+```
 
-Here are a few suggestions on what to do next if you're new to Netlify visual editor:
+The build will:
+- Generate static pages for all routes
+- Optimize images and fonts
+- Create sitemap and robots.txt
+- Bundle and minify assets
 
-- Learn [how Netlify visual editor works](https://docs.netlify.com/create/concepts/how-create-works/)
-- Check [Netlify visual editor reference documentation](https://visual-editor-reference.netlify.com/)
+## Performance
+
+This site is optimized for Lighthouse scores of 90+:
+
+- Static generation where possible
+- Optimized images with next/image
+- Font optimization with next/font
+- Minimal JavaScript bundle
+- Fast navigation with App Router
+
+## Deployment
+
+This site can be deployed to:
+
+- **Vercel** (recommended for Next.js)
+- **Netlify**
+- Any platform supporting Next.js
+
+### Deploy to Vercel
+
+```bash
+npm install -g vercel
+vercel
+```
+
+## Pages
+
+- `/` - Home page with hero, services overview, and CTAs
+- `/about` - Company mission, values, and story
+- `/services` - Service offerings with detailed descriptions
+- `/work` - Case studies listing
+- `/work/[slug]` - Individual case study pages
+- `/insights` - Blog posts listing
+- `/insights/[slug]` - Individual blog post pages
+- `/contact` - Contact form and information
+- `/privacy` - Privacy policy
+- `/terms` - Terms of service
+
+## Accessibility
+
+This site follows WCAG 2.1 guidelines:
+
+- Semantic HTML structure
+- Keyboard navigation support
+- ARIA labels where needed
+- Color contrast ratios meet AA standards
+- Responsive text sizing
+
+## Browser Support
+
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
+
+## License
+
+Copyright © 2026 The Westview Group. All rights reserved.
 
 ## Support
 
-If you get stuck along the way, get help in our [support forums](https://answers.netlify.com/).
+For questions or support, contact hello@westviewgroup.com
