@@ -3,6 +3,11 @@
   publish = "site"
   command = "echo 'Static site: no build step'"
 
+# The project still has Netlify's Next.js plugin installed from the old
+# starter template. This site isn't Next.js, so tell the plugin to stand down.
+[build.environment]
+  NETLIFY_NEXT_PLUGIN_SKIP = "true"
+
 # Keep the gated PDF and the thank-you page out of search results.
 [[headers]]
   for = "/briefing/*"
