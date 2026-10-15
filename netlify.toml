@@ -1,7 +1,15 @@
+# HoopThink: static site. No build step; Netlify serves /site as-is.
 [build]
-  command = "npm run build"
-  publish = ".next"
-  functions = ".netlify/functions"
+  publish = "site"
+  command = "echo 'Static site: no build step'"
 
-[[plugins]]
-package = "@netlify/plugin-nextjs"
+# Keep the gated PDF and the thank-you page out of search results.
+[[headers]]
+  for = "/briefing/*"
+  [headers.values]
+    X-Robots-Tag = "noindex"
+
+[[headers]]
+  for = "/fonts/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
