@@ -1,0 +1,732 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Drill Index | Hoop Think</title>
+<meta name="description" content="57 basketball drills ranked by how well they carry into games. Filter by how many players you have, then build a workout. A free tool from Hoop Think.">
+<link rel="canonical" href="https://hoopthink.net/drills/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://hoopthink.net/drills/">
+<meta property="og:title" content="The Drill Index | Hoop Think">
+<meta property="og:description" content="57 basketball drills ranked by how well they carry into games. Tell it how many players you have and it builds the workout.">
+<meta property="og:image" content="https://hoopthink.net/img/drills/drill-index-banner.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#15100E">
+<link rel="icon" type="image/png" href="/img/favicon.png">
+<link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+<link rel="preload" href="/fonts/big-shoulders-display-latin-900-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/article.css">
+<style>
+/* Layout: site header, compact hero, a panel-colored "players" band, then a two-tab tool (ranked index / workout builder) under one gate */
+:root{
+  color-scheme:dark;
+  --tier-s:#E2601A; --tier-s-ink:#15100E;
+  --tier-a:#F3E7D6; --tier-a-ink:#15100E;
+  --tier-b:#3A302B; --tier-b-ink:#F3E7D6;
+  --tier-c:#26201C; --tier-c-ink:#8F8780;
+  --ok:#7BC59A; --bad:#FF8A70;
+  --raise:#28201C;
+}
+[hidden]{display:none!important}
+.dx *{box-sizing:border-box}
+.dx button,.dx input,.dx select,.dx textarea{font:inherit}
+.dx button{cursor:pointer}
+.dx-num{font-variant-numeric:tabular-nums}
+.dx-hide{position:absolute;left:-9999px}
+
+/* hero */
+.dx-hero{padding:36px 0 28px}
+.dx-hero h1{font-size:clamp(52px,10vw,96px)}
+.dx-hero .desc{max-width:38em}
+.dx-facts{display:flex;flex-wrap:wrap;gap:8px 22px;margin:20px 0 0;padding:0;list-style:none;font-family:BST;font-weight:700;font-size:15px;color:var(--white)}
+.dx-facts b{font-family:BSD;font-weight:900;font-size:26px;color:var(--ball-hi);margin-right:6px;vertical-align:-2px}
+
+/* players band */
+.dx-band{background:var(--panel);border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.dx-band .wrap{padding-top:18px;padding-bottom:18px;display:grid;gap:12px}
+.dx-band-head{display:flex;justify-content:space-between;align-items:flex-end;gap:8px 16px;flex-wrap:wrap}
+.dx-band h2{font-family:BSD;font-weight:800;font-size:28px;line-height:1;color:var(--white);margin:0}
+.dx-status{font-family:BST;font-weight:600;font-size:16px;color:var(--smoke);margin:4px 0 0}
+.dx-status b{color:var(--white)}
+.dx-locked{font-family:BST;font-weight:600;font-size:15px;color:var(--dim);margin:0}
+.dx-locked b{font-family:BSD;font-weight:900;font-size:24px;color:var(--ball-hi);margin-right:5px;vertical-align:-2px}
+.dx-pcount{display:grid;grid-template-columns:repeat(11,minmax(0,1fr));gap:6px}
+.dx-pbtn{border:1px solid var(--line);background:var(--ink);border-radius:4px;padding:6px 2px 4px;display:flex;flex-direction:column;align-items:center;color:var(--white)}
+.dx-pbtn:hover{border-color:var(--ball)}
+.dx-pbtn .n{font-family:BSD;font-weight:900;font-size:30px;line-height:1}
+.dx-pbtn .c{font-family:BST;font-weight:600;font-size:12px;color:var(--dim);font-variant-numeric:tabular-nums}
+.dx-pbtn.any .n{font-size:19px;letter-spacing:.06em;padding:6px 0 5px}
+.dx-pbtn[aria-pressed="true"]{background:var(--ball);border-color:var(--ball);color:var(--ink)}
+.dx-pbtn[aria-pressed="true"] .c{color:var(--ink)}
+@media (max-width:640px){.dx-pcount{grid-template-columns:repeat(6,minmax(0,1fr))}}
+
+/* tabs */
+.dx-tabs{display:flex;gap:28px;border-bottom:1px solid var(--line);margin-top:28px}
+.dx-tab{background:none;border:0;border-bottom:3px solid transparent;padding:10px 0 9px;font-family:BSD;font-weight:800;font-size:26px;line-height:1;color:var(--dim);display:flex;align-items:center;gap:8px}
+.dx-tab[aria-selected="true"]{color:var(--white);border-bottom-color:var(--ball)}
+.dx-tab .pill{font-family:BST;font-weight:700;font-size:13px;background:var(--ball);color:var(--ink);border-radius:999px;min-width:22px;height:22px;padding:0 7px;display:inline-flex;align-items:center;justify-content:center}
+.dx-tab svg{color:var(--dim)}
+.dx-view{padding:22px 0 0}
+
+/* controls */
+.dx-toolbar{display:flex;gap:8px;flex-wrap:wrap}
+.dx-search{flex:1 1 260px;position:relative;min-width:0}
+.dx-search svg{position:absolute;left:13px;top:50%;transform:translateY(-50%);color:var(--dim)}
+.dx-input,.dx-select{width:100%;font-size:17px;padding:11px 13px;border:1px solid var(--line);background:var(--ink);color:var(--white);border-radius:4px}
+.dx-search .dx-input{padding-left:40px}
+.dx-input::placeholder{color:var(--dim)}
+.dx-select{width:auto;font-family:BST;font-weight:700;font-size:16px}
+.dx-chips{display:flex;gap:6px;overflow-x:auto;padding:12px 0 4px;scrollbar-width:thin}
+.dx-chip{border:1px solid var(--line);background:transparent;color:var(--smoke);border-radius:999px;padding:6px 13px;font-family:BST;font-weight:700;font-size:15px;white-space:nowrap}
+.dx-chip .k{color:var(--dim);margin-left:5px;font-weight:600}
+.dx-chip[aria-pressed="true"]{background:var(--white);border-color:var(--white);color:var(--ink)}
+.dx-chip[aria-pressed="true"] .k{color:var(--line)}
+.dx-seg{display:flex;flex-wrap:wrap;gap:6px}
+.dx-label{font-family:BST;font-weight:700;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim)}
+.dx-link{background:none;border:0;padding:0;color:var(--ball-hi);font-family:BST;font-weight:700;font-size:15px;text-decoration:underline;text-underline-offset:3px}
+.dx-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;font-family:BST;font-weight:700;font-size:18px;background:var(--ball);color:var(--ink);border:0;border-radius:4px;padding:12px 18px}
+.dx-btn:hover{background:var(--ball-hi)}
+.dx-btn.ghost{background:transparent;border:1px solid var(--line);color:var(--white)}
+.dx-btn.ghost:hover{border-color:var(--smoke)}
+
+/* featured: from our gym */
+.dx-gym{margin-top:18px;border:1px solid var(--line);border-top:4px solid var(--ball);background:var(--panel)}
+.dx-gym-head{padding:16px 18px 6px;display:grid;gap:4px}
+.dx-gym-head h3{font-family:BSD;font-weight:800;font-size:28px;line-height:1;color:var(--white);margin:0}
+.dx-gym-head p{margin:0;font-size:15.5px;max-width:52em}
+.dx-gym .dx-drill{border-top:1px solid var(--line)}
+
+/* list */
+.dx-results{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;margin:22px 0 8px;font-family:BST;font-weight:600;font-size:15px;color:var(--dim)}
+.dx-results b{color:var(--white)}
+.dx-list{border-top:2px solid var(--smoke)}
+.dx-lhead,.dx-main{display:grid;grid-template-columns:48px minmax(0,1fr) 92px 88px 88px 60px 70px;column-gap:14px;align-items:center}
+.dx-lhead{padding:9px 50px 9px 6px;font-family:BST;font-weight:700;font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);border-bottom:1px solid var(--line)}
+.dx-drill{border-bottom:1px solid var(--line)}
+.dx-row{display:grid;grid-template-columns:minmax(0,1fr) 50px;align-items:center}
+.dx-main{background:none;border:0;text-align:left;color:inherit;padding:13px 0 13px 6px;width:100%}
+.dx-main:hover{background:var(--raise)}
+.dx-rank{font-family:BSD;font-weight:900;font-size:26px;line-height:1;color:var(--dim)}
+.dx-drill.top .dx-rank{color:var(--ball-hi)}
+.dx-name{min-width:0}
+.dx-name .nm{display:block;font-family:BST;font-weight:700;font-size:19px;line-height:1.2;color:var(--white)}
+.dx-name .sub{display:block;font-family:BST;font-weight:600;font-size:14px;color:var(--dim);margin-top:2px}
+.dx-tier{display:inline-block;font-family:BSD;font-weight:900;font-size:16px;letter-spacing:.04em;padding:1px 8px;border-radius:3px;line-height:1.35}
+.dx-tier.S{background:var(--tier-s);color:var(--tier-s-ink)}
+.dx-tier.A{background:var(--tier-a);color:var(--tier-a-ink)}
+.dx-tier.B{background:var(--tier-b);color:var(--tier-b-ink)}
+.dx-tier.C{background:var(--tier-c);color:var(--tier-c-ink)}
+.dx-tier.G{background:transparent;color:var(--ball-hi);border:1px solid var(--ball)}
+.dx-lvl{display:block;font-family:BST;font-weight:600;font-size:13px;color:var(--dim);margin-top:3px}
+.dx-stats{display:contents}
+.dx-score .v{font-family:BSD;font-weight:900;font-size:26px;line-height:1;color:var(--white);font-variant-numeric:tabular-nums}
+.dx-bar{height:4px;background:var(--line);margin-top:5px;border-radius:2px;overflow:hidden}
+.dx-bar i{display:block;height:100%;background:var(--ball)}
+.dx-bar i.lo{background:var(--smoke)}
+.dx-cell{font-family:BST;font-weight:600;font-size:16px;color:var(--smoke);font-variant-numeric:tabular-nums}
+.dx-lab{display:none}
+.dx-add{width:38px;height:38px;border-radius:4px;border:1px solid var(--line);background:transparent;color:var(--smoke);font-size:22px;line-height:1;display:flex;align-items:center;justify-content:center;justify-self:center}
+.dx-add:hover{border-color:var(--ball);color:var(--ball-hi)}
+.dx-add[aria-pressed="true"]{background:var(--ball);border-color:var(--ball);color:var(--ink)}
+.dx-detail{padding:2px 50px 22px 68px;display:grid;grid-template-columns:1.2fr 1fr;gap:26px}
+.dx-detail h4{margin:0 0 6px;font-family:BST;font-weight:700;font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--ball-hi)}
+.dx-detail p{margin:0;font-size:16.5px;line-height:1.6;max-width:38em}
+.dx-kp{list-style:none;margin:0;padding:0;display:grid;gap:7px}
+.dx-kp li{display:grid;grid-template-columns:14px 1fr;gap:8px;font-size:16px;line-height:1.45;color:var(--white)}
+.dx-kp li::before{content:"";width:7px;height:7px;margin-top:9px;background:var(--ball)}
+.dx-note{font-style:italic;color:var(--smoke);margin-top:14px!important;font-size:15.5px!important}
+.dx-facts2{display:flex;flex-wrap:wrap;gap:4px 18px;margin-top:12px;font-family:BST;font-weight:600;font-size:14px;color:var(--dim)}
+.dx-facts2 b{color:var(--white);font-weight:700}
+.dx-lockbox{border:1px dashed var(--line);padding:16px;display:grid;gap:10px;justify-items:start}
+.dx-lockbox b{font-family:BSD;font-weight:800;font-size:22px;line-height:1;color:var(--white)}
+.dx-lockbox span{font-size:15.5px}
+.dx-empty{padding:36px 8px;font-size:17px}
+
+@media (max-width:760px){
+  .dx-lhead{display:none}
+  .dx-main{grid-template-columns:36px minmax(0,1fr);row-gap:10px;align-items:start;padding:14px 0 14px 2px}
+  .dx-rank{font-size:23px;padding-top:2px}
+  .dx-stats{display:flex;grid-column:2;flex-wrap:wrap;gap:8px 16px;align-items:center}
+  .dx-score{display:flex;align-items:baseline;gap:6px}
+  .dx-score .v{font-size:22px}
+  .dx-score .dx-bar{display:none}
+  .dx-lab{display:inline;font-family:BST;font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim)}
+  .dx-cell{display:flex;gap:6px;align-items:baseline;font-size:15px}
+  .dx-lvl{display:inline;margin-left:6px}
+  .dx-row{align-items:start}
+  .dx-add{margin-top:12px}
+  .dx-detail{grid-template-columns:1fr;padding:0 6px 20px 38px;gap:18px}
+}
+
+/* builder */
+.dx-builder{display:grid;grid-template-columns:330px minmax(0,1fr);gap:22px;align-items:start}
+@media (max-width:900px){.dx-builder{grid-template-columns:1fr}}
+.dx-card{background:var(--panel);border-top:4px solid var(--ball)}
+.dx-gen{padding:20px 20px 22px;display:grid;gap:18px}
+.dx-gen h3,.dx-sheet h3{font-family:BSD;font-weight:800;font-size:30px;line-height:1;color:var(--white);margin:0}
+.dx-gen p{margin:6px 0 0;font-size:15.5px;line-height:1.5}
+.dx-using{font-family:BST;font-weight:600;font-size:15px;background:var(--ink);padding:10px 12px;border-radius:4px}
+.dx-using b{color:var(--white)}
+.dx-grp{display:grid;gap:8px}
+.dx-check{display:grid;grid-template-columns:24px 1fr;gap:10px;font-family:BST;font-weight:700;font-size:16px;color:var(--white)}
+.dx-check input{width:20px;height:20px;margin:2px 0 0;accent-color:#E2601A}
+.dx-check small{display:block;font-weight:600;font-size:14px;color:var(--dim);line-height:1.4}
+.dx-hint{font-family:BST;font-weight:600;font-size:14px;color:var(--dim)}
+.dx-undo{display:flex;justify-content:space-between;align-items:center;gap:8px;font-family:BST;font-weight:600;font-size:14px;background:var(--ink);padding:9px 12px;border-radius:4px}
+.dx-sheet{background:var(--panel);border-top:4px solid var(--maple)}
+.dx-sheet-head{padding:18px 20px;display:grid;gap:14px;border-bottom:1px solid var(--line)}
+.dx-sname{font-family:BSD;font-weight:800;font-size:32px;line-height:1.1;color:var(--white);background:transparent;border:0;border-bottom:2px solid var(--line);border-radius:0;padding:2px 0 6px;width:100%}
+.dx-sname:focus{outline:none;border-bottom-color:var(--ball)}
+.dx-sname::placeholder{color:var(--dim)}
+.dx-sstats{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.dx-sstat{background:var(--ink);padding:10px 12px;border-radius:4px;min-width:0}
+.dx-sstat .v{font-family:BSD;font-weight:900;font-size:32px;line-height:1;color:var(--white);font-variant-numeric:tabular-nums}
+.dx-sstat .v.hi{color:var(--ball-hi)}
+.dx-sstat .l{font-family:BST;font-weight:700;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-top:4px}
+@media (max-width:560px){.dx-sstats{grid-template-columns:repeat(3,minmax(0,1fr))}.dx-sstat .v{font-size:28px}}
+.dx-verdict{font-family:BST;font-weight:700;font-size:16px;padding:10px 14px;border-left:4px solid}
+.dx-verdict.ok{color:var(--ok);border-color:var(--ok);background:rgba(123,197,154,.08)}
+.dx-verdict.bad{color:var(--bad);border-color:var(--bad);background:rgba(255,138,112,.08)}
+.dx-verdict.info{color:var(--smoke);border-color:var(--line);background:var(--ink)}
+.dx-cov{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.dx-cov span.c{font-family:BST;font-weight:700;font-size:14px;color:var(--maple);border:1px solid var(--line);border-radius:999px;padding:2px 10px}
+.dx-slist{list-style:none;margin:0;padding:0}
+.dx-sitem{display:grid;grid-template-columns:28px 30px minmax(0,1fr) 40px;gap:10px;align-items:center;padding:12px 16px 12px 12px;border-bottom:1px solid var(--line)}
+.dx-sitem.over{background:rgba(255,138,112,.08)}
+.dx-sitem.gym{box-shadow:inset 3px 0 0 var(--ball)}
+.dx-mv{display:grid;gap:2px}
+.dx-mv button{border:1px solid var(--line);background:var(--ink);border-radius:3px;height:22px;width:26px;display:flex;align-items:center;justify-content:center;color:var(--smoke);padding:0}
+.dx-mv button:disabled{opacity:.3;cursor:default}
+.dx-sidx{font-family:BSD;font-weight:900;font-size:28px;line-height:1;color:var(--dim);text-align:center}
+.dx-sbody{min-width:0}
+.dx-sbody .nm{font-family:BST;font-weight:700;font-size:17px;line-height:1.25;color:var(--white)}
+.dx-smeta{display:flex;flex-wrap:wrap;gap:4px 14px;align-items:center;margin-top:4px;font-family:BST;font-weight:600;font-size:14px;color:var(--dim)}
+.dx-smeta b{color:var(--smoke)}
+.dx-smeta .need{color:var(--bad);font-weight:700}
+.dx-smeta .dx-tier{font-size:14px;padding:0 6px}
+.dx-rm{width:34px;height:34px;border-radius:4px;border:1px solid var(--line);background:transparent;color:var(--dim);display:flex;align-items:center;justify-content:center}
+.dx-rm:hover{color:var(--bad);border-color:var(--bad)}
+.dx-sactions{display:flex;flex-wrap:wrap;gap:10px;padding:16px 20px;align-items:center}
+.dx-sempty{padding:34px 20px;display:grid;gap:12px;justify-items:center;text-align:center}
+.dx-sempty b{font-family:BSD;font-weight:800;font-size:28px;line-height:1;color:var(--white)}
+.dx-sempty p{margin:0;max-width:34em;font-size:16px}
+.dx-fallback{margin:0 20px 18px;display:grid;gap:6px}
+.dx-fallback textarea{width:100%;min-height:180px;font-family:SS4,Georgia,serif;font-size:14px;padding:10px;background:var(--ink);color:var(--white);border:1px solid var(--line);border-radius:4px}
+.dx-lockpanel{padding:28px 22px;display:grid;gap:14px;max-width:640px}
+.dx-lockpanel h3{font-family:BSD;font-weight:800;font-size:clamp(32px,5vw,44px);line-height:.95;color:var(--white);margin:0}
+.dx-lockpanel ul{margin:0;padding:0 0 0 18px;display:grid;gap:4px;font-size:16.5px}
+
+/* how we score */
+.dx-how{border-top:1px solid var(--line);margin-top:56px;padding:48px 0 8px}
+.dx-how h2{font-family:BSD;font-weight:800;color:var(--white);font-size:clamp(34px,5vw,48px);line-height:.95;margin:0 0 12px}
+.dx-how > .wrap > p{max-width:40em;font-size:17.5px;margin:0 0 22px}
+.dx-weights{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0 36px;border-top:2px solid var(--smoke)}
+.dx-weights li{display:grid;grid-template-columns:1fr auto;gap:2px 16px;padding:14px 0;border-bottom:1px solid var(--line)}
+.dx-weights b{font-family:BSD;font-weight:800;font-size:22px;line-height:1.05;color:var(--white)}
+.dx-weights em{grid-column:2;grid-row:1/span 2;font-style:normal;font-family:BSD;font-weight:900;font-size:30px;color:var(--ball-hi)}
+.dx-weights span{font-size:15.5px;line-height:1.45}
+.dx-tiers{display:flex;flex-wrap:wrap;gap:10px 22px;margin-top:20px;font-family:BST;font-weight:600;font-size:15px}
+
+/* gate */
+.dx-gate{position:fixed;inset:0;z-index:50;background:rgba(10,7,6,.78);display:flex;align-items:flex-end;justify-content:center;padding:16px;padding-bottom:max(16px,env(safe-area-inset-bottom,0px))}
+@media (min-width:640px){.dx-gate{align-items:center}}
+.dx-gate .get{margin:0;width:100%;max-width:480px;max-height:calc(100vh - 32px);overflow:auto;position:relative}
+.dx-gate .x{position:absolute;top:10px;right:10px;width:36px;height:36px;border:0;background:transparent;color:var(--dim);font-size:24px;line-height:1}
+.dx-gate .x:hover{color:var(--white)}
+.dx-err{font-family:BST;font-weight:700;font-size:15px;color:var(--bad);margin:0 0 10px!important}
+.dx-toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom,0px));transform:translateX(-50%);z-index:60;background:var(--white);color:var(--ink);font-family:BST;font-weight:700;font-size:16px;padding:12px 18px;border-radius:4px;box-shadow:0 12px 30px rgba(0,0,0,.5);max-width:calc(100% - 32px)}
+
+/* session bar */
+.dx-sbar{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--panel);border-top:3px solid var(--ball);padding-bottom:env(safe-area-inset-bottom,0px)}
+.dx-sbar .wrap{display:flex;align-items:center;gap:12px;padding-top:10px;padding-bottom:10px}
+.dx-sbar p{flex:1;min-width:0;margin:0;font-family:BST;font-weight:600;font-size:15px}
+.dx-sbar p b{font-family:BSD;font-weight:900;font-size:20px;color:var(--white);margin-right:8px}
+.dx-sbar .dx-btn{font-size:16px;padding:10px 14px}
+@media (prefers-reduced-motion:reduce){.dx *{transition:none!important;animation:none!important}}
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="/"><img src="/img/logo.jpg" alt="" width="40" height="40"><span>HOOP THINK</span></a>
+    <p class="pub">A Westview Group publication</p>
+  </div>
+</header>
+
+<main class="dx">
+  <section class="dx-hero">
+    <div class="wrap">
+      <p class="flag"><b>Player Development</b> Free tool · Solo to full team</p>
+      <h1>The Drill Index.</h1>
+      <p class="for">For coaches and trainers. <span>Useful to every parent running a driveway workout.</span></p>
+      <p class="desc">Every drill here is scored on one question: how much of it shows up in a real game? Tell it how many players you have and what you’re working on, and it builds the workout.</p>
+      <ul class="dx-facts" id="facts"></ul>
+    </div>
+  </section>
+
+  <section class="dx-band" aria-label="Players at the workout">
+    <div class="wrap">
+      <div class="dx-band-head">
+        <div>
+          <h2>How many players do you have?</h2>
+          <p class="dx-status" id="status"></p>
+        </div>
+        <p class="dx-locked" id="locked"></p>
+      </div>
+      <div class="dx-pcount" id="pcount"></div>
+    </div>
+  </section>
+
+  <div class="wrap">
+    <div class="dx-tabs" role="tablist" aria-label="Drill Index">
+      <button class="dx-tab" role="tab" id="tab-index" data-view="index" aria-selected="true">The index</button>
+      <button class="dx-tab" role="tab" id="tab-builder" data-view="builder" aria-selected="false">Build a workout <span class="pill dx-num" id="tab-count" hidden>0</span><svg id="tab-lock" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-label="Free with email"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg></button>
+    </div>
+
+    <!-- INDEX -->
+    <section class="dx-view" id="view-index">
+      <div class="dx-toolbar">
+        <div class="dx-search">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+          <input class="dx-input" id="q" type="search" placeholder="Search drills, skills, tags" autocomplete="off" aria-label="Search drills">
+        </div>
+        <select class="dx-select" id="sort" aria-label="Sort">
+          <option value="rank">Sort: Rank</option>
+          <option value="transfer">Sort: Game transfer</option>
+          <option value="time">Sort: Shortest first</option>
+          <option value="level">Sort: Beginner first</option>
+        </select>
+      </div>
+      <div class="dx-chips" id="cats" role="group" aria-label="Skill"></div>
+
+      <div class="dx-gym" id="gym">
+        <div class="dx-gym-head">
+          <span class="dx-label" style="color:var(--ball-hi)">From our gym</span>
+          <h3>The Florida system</h3>
+          <p>Florida is the warm-up and the finisher Keil Moore’s Scholars Elite program runs at every workout: 95 makes before the session starts, and 20 straight swishes to end it. It sits outside the rankings because it’s ours.</p>
+        </div>
+        <div id="gym-list"></div>
+      </div>
+
+      <div class="dx-results" id="results"></div>
+      <div class="dx-list" id="list"></div>
+    </section>
+
+    <!-- BUILDER -->
+    <section class="dx-view" id="view-builder" hidden>
+      <div id="builder-locked" class="dx-card dx-lockpanel">
+        <span class="dx-label" style="color:var(--ball-hi)">Free with your email</span>
+        <h3>Tell it your players and your time. It writes the workout.</h3>
+        <ul>
+          <li>Builds a session from the highest-ranked drills your group can actually run</li>
+          <li>Pick your focus: shooting, finishing, defense, team play and more</li>
+          <li>Open with the Florida warm-up and close with the Swish Finisher</li>
+          <li>Copy the plan into a text, an email or your practice notes</li>
+        </ul>
+        <div><button class="dx-btn" data-gate="builder">Unlock the builder</button></div>
+      </div>
+
+      <div id="builder-open" class="dx-builder" hidden>
+        <aside class="dx-card dx-gen" aria-labelledby="gen-h">
+          <div>
+            <h3 id="gen-h">Build it for me</h3>
+            <p>Pick your time and what you’re working on. It fills the session with the best drills your group can run.</p>
+          </div>
+          <div class="dx-using" id="gen-using"></div>
+          <div class="dx-grp"><span class="dx-label">Time available</span><div class="dx-seg" id="gen-min"></div></div>
+          <div class="dx-grp"><span class="dx-label">Focus</span><div class="dx-seg" id="gen-focus"></div><span class="dx-hint">Leave all off for a balanced session.</span></div>
+          <label class="dx-check" for="gen-book"><input type="checkbox" id="gen-book" checked><span>Florida warm-up and finisher<small>Roll &amp; Catch and the Mikan Complex up front, the Swish Finisher last. Uses 45 of your minutes.</small></span></label>
+          <div class="dx-grp">
+            <button class="dx-btn" id="gen-go">Build the workout</button>
+            <span class="dx-hint">Replaces the current session.</span>
+            <div class="dx-undo" id="undo" hidden><span id="undo-text">Session replaced.</span><button class="dx-link" id="undo-btn">Undo</button></div>
+          </div>
+        </aside>
+
+        <div class="dx-sheet">
+          <div class="dx-sheet-head">
+            <span class="dx-label">Your workout</span>
+            <input class="dx-sname" id="sname" placeholder="Name this workout" autocomplete="off" aria-label="Workout name">
+            <div class="dx-sstats" id="sstats"></div>
+            <div id="verdict"></div>
+            <div class="dx-cov" id="coverage"></div>
+          </div>
+          <ol class="dx-slist" id="slist"></ol>
+          <div id="sempty"></div>
+          <div class="dx-sactions" id="sactions">
+            <button class="dx-btn" id="copy-plan">Copy the workout</button>
+            <button class="dx-btn ghost" id="clear-session">Clear</button>
+          </div>
+          <div class="dx-fallback" id="plan-fallback" hidden>
+            <span class="dx-hint">Your browser blocked copying. The workout is selected below.</span>
+            <textarea id="plan-text" readonly aria-label="Workout plan"></textarea>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <section class="dx-how" id="how">
+    <div class="wrap">
+      <h2>How we score a drill</h2>
+      <p>Each drill gets a 1–5 grade on six questions. The grades are weighted and turned into an effectiveness score out of 100. Game transfer carries the most weight because a drill that looks good in an empty gym and disappears in a game isn’t doing its job.</p>
+      <ul class="dx-weights">
+        <li><b>Game transfer</b><em>30%</em><span>How much it looks and feels like real possessions.</span></li>
+        <li><b>Decision load</b><em>20%</em><span>How many real reads the player makes, versus scripted reps.</span></li>
+        <li><b>Variability</b><em>15%</em><span>Different spots, angles, timing and defenders from rep to rep.</span></li>
+        <li><b>Competitive pressure</b><em>15%</em><span>A live opponent or a score that raises the intensity.</span></li>
+        <li><b>Rep density</b><em>10%</em><span>Reps per minute while the quality stays high.</span></li>
+        <li><b>Evidence</b><em>10%</em><span>Backing from coaching curricula like Jr. NBA and USA Basketball, or published research.</span></li>
+      </ul>
+      <div class="dx-tiers"><span><span class="dx-tier S">S</span> 90 and up</span><span><span class="dx-tier A">A</span> 75–89</span><span><span class="dx-tier B">B</span> 60–74</span><span><span class="dx-tier C">C</span> under 60</span></div>
+    </div>
+  </section>
+</main>
+
+<!-- Email gate (Netlify form: drill-index) -->
+<div class="dx-gate dx" id="gate" hidden role="dialog" aria-modal="true" aria-labelledby="gate-h">
+  <form action="/drills/thanks/" class="get" id="gate-form" method="POST" name="drill-index" data-netlify="true" netlify-honeypot="company">
+    <button type="button" class="x" id="gate-close" aria-label="Close">×</button>
+    <input type="hidden" name="form-name" value="drill-index">
+    <p class="hide"><label>Leave this empty <input name="company" tabindex="-1" autocomplete="off"></label></p>
+    <h2 id="gate-h">Unlock the full Drill Index</h2>
+    <p id="gate-sub">Free. Enter your email to unlock every drill’s coaching points and research notes, plus the workout builder. You’ll also get the HoopThink Briefing when it launches December 1.</p>
+    <p class="dx-err" id="gate-err" hidden></p>
+    <label class="field"><span>Email</span><input type="email" name="email" id="g-email" required autocomplete="email" inputmode="email" placeholder="you@example.com"></label>
+    <label class="field"><span>First name <small>optional</small></span><input type="text" name="first_name" id="g-name" autocomplete="given-name"></label>
+    <label class="field"><span>I’m a… <small>optional</small></span>
+      <select name="role" id="g-role">
+        <option value="">Choose one</option>
+        <option>Parent or family member</option>
+        <option>Club coach or program director</option>
+        <option>Trainer</option>
+        <option>High school coach</option>
+        <option>College coach or staff</option>
+        <option>Scout, media, or event operator</option>
+        <option>Player</option>
+        <option>Other</option>
+      </select>
+    </label>
+    <button class="btn" type="submit" id="gate-submit">Unlock the index</button>
+    <p class="fine">We use your email to send the HoopThink Briefing and nothing else.</p>
+  </form>
+</div>
+
+<div class="dx-toast" id="toast" role="status" hidden></div>
+
+<div class="dx-sbar dx" id="sbar" hidden>
+  <div class="wrap">
+    <p id="sbar-txt"></p>
+    <button class="dx-btn" id="sbar-open">Open workout</button>
+  </div>
+</div>
+
+<footer class="foot">
+  <div class="wrap">
+    <a class="brand" href="/"><img src="/img/logo.jpg" alt="" width="40" height="40"><span>HOOP THINK</span></a>
+    <p>© 2026 The Westview Group</p>
+    <p class="motto">The game. The decisions. The people in between.</p>
+  </div>
+</footer>
+
+<script>
+const DRILLS = [{"id":1,"name":"Form Shooting (Mikan Progression)","category":"Shooting","subcategory":"Fundamentals","effectiveness":98,"gameTransfer":97,"difficulty":"Beginner","ageLevel":"All","timeMin":10,"players":"Solo","tier":"S","source":"original","description":"Foundational muscle memory drill. Player shoots from 2–3 feet, one hand, focusing on wrist snap, arc, and release. Progresses to Mikan layup alternating sides.","keyPoints":["One-hand release at apex","Consistent arc (45°+)","Follow-through hold","Eyes on rim, not ball"],"researchNote":"A staple first drill in youth skill programs: close range and one hand, so the player builds a clean release before adding distance.","tags":["muscle memory","fundamentals","solo","youth"]},{"id":2,"name":"1v1 Full Court (Live Reps)","category":"Offense","subcategory":"Decision-Making","effectiveness":96,"gameTransfer":99,"difficulty":"Intermediate","ageLevel":"13U+","timeMin":15,"players":"2","tier":"S","source":"original","description":"Live 1v1 from halfcourt or full court. Offensive player must create separation, attack closeouts, and finish. Best game-replicating drill in any arsenal.","keyPoints":["Attack off catch or dribble","Use change of pace","Read defensive stance","Finish under contact"],"researchNote":"Live opposition forces the reads that stationary reps skip, which is why it scores near the top for game transfer.","tags":["game-like","competitive","decision-making","live"]},{"id":3,"name":"3v2 / 2v1 Transition Drill","category":"Team","subcategory":"Transition","effectiveness":95,"gameTransfer":98,"difficulty":"Intermediate","ageLevel":"12U+","timeMin":12,"players":"5","tier":"S","source":"original","description":"Numerical advantage drills that teach reading the defense, spacing, and quick decisions. Highest biomechanical load per minute of any structured team drill per 2025 research.","keyPoints":["Ball-mover reads defense first","Spacing at 3-point line","Lay-in unless defense collapses","Rotate back on miss"],"researchNote":"2025 MDPI study: Full-court 3v3/5v5 drills impose highest physical demands vs. 2v2/4v4 formats.","tags":["team","transition","high-intensity","decision-making"]},{"id":4,"name":"5v5 Halfcourt Scrimmage (Structured)","category":"Team","subcategory":"Scrimmage","effectiveness":94,"gameTransfer":99,"difficulty":"Advanced","ageLevel":"14U+","timeMin":20,"players":"10","tier":"S","source":"original","description":"Controlled scrimmage with specific rules (no help-side defense, make-it-take-it, limit dribbles). Highest-transfer team development tool when constraints are applied.","keyPoints":["Add constraints to force habits","Coach pauses for teaching moments","Score possession efficiency","Post-play analysis"],"researchNote":"2025 MDPI research: scrimmage-format drills must have structured constraints to maximize learning transfer.","tags":["team","scrimmage","game-like","advanced"]},{"id":5,"name":"Ball-Handling: Two-Ball Stationary","category":"Ball Handling","subcategory":"Coordination","effectiveness":93,"gameTransfer":84,"difficulty":"Beginner","ageLevel":"All","timeMin":8,"players":"Solo","tier":"S","source":"original","description":"Simultaneous two-ball dribble variations — alternating, same time, high-low. Builds hand independence, soft touch, and peripheral vision.","keyPoints":["Head up always","Fingertip control, not palm","Start slow, speed up","Non-dominant hand emphasis"],"researchNote":"8-week non-dominant/dominant hand training showed significant gains in ball-handling AND shooting accuracy (Tousi et al., 2017).","tags":["solo","coordination","non-dominant","fundamentals"]},{"id":6,"name":"Jab Step Series (Triple Threat)","category":"Offense","subcategory":"Footwork","effectiveness":92,"gameTransfer":95,"difficulty":"Beginner","ageLevel":"All","timeMin":10,"players":"Solo","tier":"S","source":"original","description":"From triple threat: jab straight, jab-and-go, jab-crossover. Teaches offensive footwork without a dribble — forces defenders to commit before the attack.","keyPoints":["Load weight on pivot foot","Jab foot lands hard","Eyes simulate reading defender","Explode on first dribble"],"researchNote":"A staple of skill-development curricula. It carries straight into half-court offense.","tags":["footwork","solo","fundamentals","half-court"]},{"id":7,"name":"Catch & Shoot (Off Movement)","category":"Shooting","subcategory":"Spot-Up","effectiveness":91,"gameTransfer":96,"difficulty":"Beginner","ageLevel":"All","timeMin":12,"players":"2","tier":"S","source":"original","description":"Player relocates off a pass and shoots in rhythm. Alternates corners, wings, elbows. Teaches shot preparation BEFORE receiving the ball.","keyPoints":["Hands ready before catch","Catch in shooting pocket","Same-side foot forward","No pump fakes on open looks"],"researchNote":"Per Breakthrough Basketball: players who never train decision-making on catch shoot well in drills but poorly in games.","tags":["game-like","shooting","partner","rhythm"]},{"id":8,"name":"Defensive Slide Gauntlet","category":"Defense","subcategory":"Lateral Movement","effectiveness":90,"gameTransfer":92,"difficulty":"Beginner","ageLevel":"All","timeMin":8,"players":"Solo","tier":"S","source":"original","description":"Defensive slides full-court with sprint-back. Incorporates closeouts, drop steps, and 180° directional changes. Core defensive athleticism builder.","keyPoints":["Wide base, stay low","Don't cross feet","Active hands at all times","Sprint out of each slide"],"researchNote":"Defensive footwork tends to get the fewest individual reps in grassroots programs. Systematic slide work closes that gap.","tags":["defense","conditioning","solo","footwork"]},{"id":9,"name":"Wing Rip-Through Counter","category":"Offense","subcategory":"Attack Moves","effectiveness":89,"gameTransfer":94,"difficulty":"Intermediate","ageLevel":"14U+","timeMin":10,"players":"2","tier":"A","source":"original","description":"Catch on wing, defender plays passing lane. Offensive player rips through or jabs to create advantage. Live or dummy defender progression.","keyPoints":["Rip ball from hip to hip","Low, fast, one motion","Attack shoulder of defender","Finish strong side or pull up"],"researchNote":"Counter-move training tied to decision-making under pressure — essential for elite-level development.","tags":["counter-moves","live","wing","advanced"]},{"id":10,"name":"Mikan Drill (Layup Alternating)","category":"Finishing","subcategory":"Around the Basket","effectiveness":88,"gameTransfer":90,"difficulty":"Beginner","ageLevel":"All","timeMin":6,"players":"Solo","tier":"A","source":"original","description":"Alternating layups from each side of the basket without the ball hitting the floor. Builds finishing touch, hand coordination, and stamina under the rim.","keyPoints":["Non-dominant hand emphasis","Soft touch off glass","Continuous rhythm","Progress to reverse Mikan"],"researchNote":"A standard finishing progression in youth programs for touch and two-handed finishing around the rim.","tags":["finishing","solo","fundamentals","youth"]},{"id":11,"name":"Shell Drill (4v4 Help Defense)","category":"Defense","subcategory":"Team Defense","effectiveness":88,"gameTransfer":93,"difficulty":"Intermediate","ageLevel":"13U+","timeMin":15,"players":"8","tier":"A","source":"original","description":"4v4 structured possession where offense passes and defense must rotate to deny, gap, and help positions. No live dribble initially — builds defensive communication.","keyPoints":["Ball-you-man positioning","Deny on first pass","Help side stance (open to ball)","Talk on every possession"],"researchNote":"The standard way to install team defense concepts before going live.","tags":["team defense","rotation","communication","structure"]},{"id":12,"name":"Partner Passing Wall Series","category":"Passing","subcategory":"Fundamentals","effectiveness":87,"gameTransfer":86,"difficulty":"Beginner","ageLevel":"All","timeMin":8,"players":"Solo","tier":"A","source":"original","description":"Chest, bounce, and overhead passes against a wall or partner. Focus on wrist snap, backspin, and pass fakes. Solo option removes excuse of no partner.","keyPoints":["Wrist snap at release","Step into every pass","Add pass fakes as progression","Non-dominant hand work"],"researchNote":"Passing is the most overlooked fundamental in youth basketball programs (Pro Skills Basketball, 10-year observation).","tags":["passing","fundamentals","solo","youth"]},{"id":13,"name":"Pull-Up Mid-Range (Dribble Series)","category":"Shooting","subcategory":"Off Dribble","effectiveness":86,"gameTransfer":93,"difficulty":"Intermediate","ageLevel":"13U+","timeMin":12,"players":"Solo","tier":"A","source":"original","description":"2–3 dribble pull-up from elbow and wing. Builds footwork into jump stops and 1-2 step finishes. Chains ball-handling into scoring.","keyPoints":["Low dribble into gather","Jump stop or 1-2","Balance at release","Same arc as set shot"],"researchNote":"Bridges ball-handling and scoring: the gather, the stop and the rise into a balanced jumper.","tags":["shooting","off-dribble","footwork","scoring"]},{"id":14,"name":"Closeout Drill (Offense + Defense)","category":"Defense","subcategory":"Closeouts","effectiveness":85,"gameTransfer":95,"difficulty":"Intermediate","ageLevel":"12U+","timeMin":10,"players":"2","tier":"A","source":"original","description":"Defender starts under basket, closeout to perimeter shooter. Offensive player reads — shoot, drive left, or drive right based on closeout angle.","keyPoints":["High hands on closeout","Stutter-step to control","Offense reads foot positioning","Contest without fouling"],"researchNote":"Teaches BOTH sides simultaneously — most efficient drill structure for limited practice time.","tags":["defense","closeout","decision-making","two-sided"]},{"id":15,"name":"Scrimmage: 3v3 Half Court (No Dribble)","category":"Team","subcategory":"Constraint Drill","effectiveness":85,"gameTransfer":96,"difficulty":"Advanced","ageLevel":"13U+","timeMin":15,"players":"6","tier":"A","source":"original","description":"Three-on-three with no dribble allowed. Forces cutting, spacing, passing, and movement without the ball. One of the best IQ developers in basketball.","keyPoints":["Cut on every pass","Space at 3 spots minimum","No standing — constant movement","Force double-team rotations"],"researchNote":"Taking the dribble away forces cutting, spacing and passing decisions on every possession.","tags":["IQ","constraint","team","cutting"]},{"id":16,"name":"Ball-Handling: Cone Weave (One Dribble)","category":"Ball Handling","subcategory":"Change of Direction","effectiveness":84,"gameTransfer":88,"difficulty":"Intermediate","ageLevel":"11U+","timeMin":10,"players":"Solo","tier":"A","source":"original","description":"Single dribble change of direction through cones — crossover, between legs, behind back. Develops explosive first step off each move.","keyPoints":["Push off outside foot","Keep dribble low","Eyes up, read end of cone","Attack with first step"],"researchNote":"Builds change-of-direction footwork with the ball. Add a defender to raise the game transfer.","tags":["agility","ball-handling","footwork","solo"]},{"id":17,"name":"Post Footwork Series (Drop Step + Counter)","category":"Finishing","subcategory":"Post","effectiveness":83,"gameTransfer":91,"difficulty":"Intermediate","ageLevel":"13U+","timeMin":10,"players":"Solo","tier":"A","source":"original","description":"Drop step baseline, drop step middle, up-and-under counter. Builds a complete post repertoire with footwork sequencing that creates separation.","keyPoints":["Seal defender with hip","Two-foot drop step landing","Counter off defender's pressure","Quick, decisive moves"],"researchNote":"Post footwork gets fewer reps as youth basketball spreads out, so players who have it stand out.","tags":["post","footwork","finishing","bigs"]},{"id":18,"name":"Screen & Roll / Pop Read Drill","category":"Offense","subcategory":"Ball Screen","effectiveness":81,"gameTransfer":95,"difficulty":"Advanced","ageLevel":"15U+","timeMin":15,"players":"4","tier":"A","source":"original","description":"Ball-handler attacks ball screen, reads coverage (drop, hedge, switch), and makes correct decision. Screener reads for roll or pop based on defender.","keyPoints":["Set legal screen angle","Ballhandler reads before turning corner","Screener reads defender after contact","Space matters most"],"researchNote":"Ball-screen action shows up in almost every offense above 14U, yet it gets little teaching time in many grassroots programs.","tags":["ball screen","advanced","IQ","modern offense"]},{"id":19,"name":"Pivot + Rip (Jump Stop Series)","category":"Footwork","subcategory":"Pivoting","effectiveness":82,"gameTransfer":89,"difficulty":"Beginner","ageLevel":"All","timeMin":8,"players":"Solo","tier":"A","source":"original","description":"Players catch, jump stop, front pivot, reverse pivot, and rip through in sequence. Eliminates travel habits and builds a legal, decisive footwork vocabulary.","keyPoints":["Small hop on jump stop","Establish pivot before move","Rip fast and low","Combo with jab series"],"researchNote":"One of the highest-leverage drills for cutting travel violations and building legal offensive moves.","tags":["footwork","fundamentals","solo","youth"]},{"id":20,"name":"Shooting: 1-Minute Spot Shooting","category":"Shooting","subcategory":"Volume","effectiveness":80,"gameTransfer":82,"difficulty":"Beginner","ageLevel":"All","timeMin":5,"players":"2","tier":"A","source":"original","description":"Max makes in 60 seconds from one spot with a rebounder. Tracks progress over time. Forces rhythm, pace, and shot selection under time pressure.","keyPoints":["Track makes weekly","Consistent arc and release","Rebounder creates rhythm","No adjusting — shoot your shot"],"researchNote":"PGC Basketball: rhythm and confidence training via time-pressure shooting correlates with game-performance shooting percentages.","tags":["shooting","rhythm","tracking","progress"]},{"id":21,"name":"Dribble Handoff (DHO) + Actions","category":"Offense","subcategory":"Combination","effectiveness":79,"gameTransfer":90,"difficulty":"Advanced","ageLevel":"14U+","timeMin":12,"players":"3","tier":"A","source":"original","description":"Ballhandler dribbles toward wing, hands off in traffic. Receiver reads defender — keep, reject, or curl. Mimics modern motion offense actions.","keyPoints":["Set up with jab before hand-off","Receiver shoulders low","Read defender positioning","Space the floor after"],"researchNote":"Dribble handoffs are a common ball-screen alternative in modern offenses, including the women's game, which makes them worth teaching from 13U up.","tags":["modern offense","team","combination","advanced"]},{"id":22,"name":"Free Throw Pressure Routine","category":"Shooting","subcategory":"Free Throws","effectiveness":78,"gameTransfer":91,"difficulty":"Beginner","ageLevel":"All","timeMin":5,"players":"Solo","tier":"A","source":"original","description":"Make-X-in-a-row from the line before leaving. Add conditioning reps as consequences for misses. Simulates end-of-game pressure on routine shots.","keyPoints":["Identical pre-shot routine every rep","Consequence for misses","Track over weeks","Breathe before shooting"],"researchNote":"Free throws decide close youth games and are often the least practiced skill in a session.","tags":["free throws","mental","routine","pressure"]},{"id":23,"name":"Agility Ladder: Basketball Footwork Patterns","category":"Athleticism","subcategory":"Agility","effectiveness":75,"gameTransfer":79,"difficulty":"Beginner","ageLevel":"All","timeMin":10,"players":"Solo","tier":"A","source":"original","description":"Lateral, crossover, and in-and-out patterns through agility ladder. Builds foot speed, body control, and proprioception. Best as warm-up or activation tool.","keyPoints":["Low athletic position","Quick ground contact","Eyes forward not down","Layer basketball moves after"],"researchNote":"Agility training is most effective as a complement to skill work — not as a standalone development tool.","tags":["agility","athleticism","warm-up","coordination"]},{"id":24,"name":"Ballhandling: Figure 8 + Speed Dribble","category":"Ball Handling","subcategory":"Stationary + Speed","effectiveness":74,"gameTransfer":76,"difficulty":"Beginner","ageLevel":"All","timeMin":6,"players":"Solo","tier":"B","source":"original","description":"Figure 8 around legs to build hand coordination, followed by speed dribble sprints down the floor. Transition from stationary to dynamic control.","keyPoints":["Fingertip control in figures","Low dribble on speed reps","Push ball ahead on sprints","Non-dominant lead"],"researchNote":"Stationary drills build foundation — game transfer requires adding speed and movement progressions.","tags":["coordination","fundamentals","solo","progression"]},{"id":25,"name":"Conditioning: 17s Sprint Test","category":"Conditioning","subcategory":"Aerobic Base","effectiveness":70,"gameTransfer":72,"difficulty":"Advanced","ageLevel":"14U+","timeMin":12,"players":"Team","tier":"B","source":"original","description":"Baseline-to-baseline 17 times in 60 seconds. Classic NBA/NCAA conditioning benchmark. Tests aerobic threshold and mental toughness simultaneously.","keyPoints":["Pace first 10 trips","Arms drive stride length","Group accountability matters","Track time weekly"],"researchNote":"A classic conditioning benchmark. It is pure physical output with little skill transfer, which is why it ranks low here.","tags":["conditioning","fitness","benchmark","team"]},{"id":26,"name":"3v3 Small-Sided Game (Constraint-Based)","category":"Team","subcategory":"Small-Sided Game","effectiveness":95,"gameTransfer":100,"difficulty":"Intermediate","ageLevel":"All","timeMin":15,"players":"6+","tier":"S","source":"imported","description":"Constraint-based 3v3 on a half-court. Rules (no dribble, force passes, etc.) create decision density. Highest-transfer format per constraints-led research.","keyPoints":["Apply at least one constraint per session","Track shot quality + paint touches","Rotate coverage reads","Debrief decisions post-possession"],"researchNote":"SSGs affect technical, tactical, and physical outcomes; supported by 2025 PMC systematic review evidence.","tags":["SSG","constraints","reads","half-court"]},{"id":27,"name":"3-on-3-on-3 Continuous (Coach Calls Coverage)","category":"Team","subcategory":"Small-Sided Game","effectiveness":94,"gameTransfer":100,"difficulty":"Advanced","ageLevel":"15U+","timeMin":15,"players":"9+","tier":"S","source":"imported","description":"Three-team continuous rotation where coach calls defensive coverage as teams attack. Highest decision load of any structured team drill format.","keyPoints":["Read coverage before the catch","Off-ball reads as important as ball handler","Sprint to set up on turnover","Rotate team out on score"],"researchNote":"Representative, decision-dense SSG format advocated in modern coaching literature; MDPI 2020 citation.","tags":["SSG","coverage","competitive","advanced"]},{"id":28,"name":"2-on-1 With a Chaser (Advantage Drill)","category":"Team","subcategory":"Transition","effectiveness":90,"gameTransfer":100,"difficulty":"Intermediate","ageLevel":"All","timeMin":12,"players":"4+","tier":"S","source":"imported","description":"2v1 fast-break with a trailing defender chasing. Offense must make correct pass vs. finish read under time pressure. Defender must learn rim protection angles.","keyPoints":["Ball-carrier reads rim first","Correct read = pass when help stops ball","Chaser practices controlled sprint","Track conversion rate weekly"],"researchNote":"SSGs and advantage drills improve decision-making and physical performance in basketball per PMC 2025 review.","tags":["transition","advantage","fast-break","reads"]},{"id":29,"name":"3-on-2 to 2-on-1 (Steve Nash Continuous)","category":"Team","subcategory":"Transition","effectiveness":88,"gameTransfer":100,"difficulty":"Intermediate","ageLevel":"All","timeMin":15,"players":"5+","tier":"A","source":"imported","description":"3v2 attacks, two defenders stay, one attacker stays to defend 2v1 going back. Continuous loop builds conditioning and transition decision density.","keyPoints":["Outlet pass timing is the most-missed rep","Sprint to sprint lanes — no wide runs","Stay-back defender sprints to rim immediately","Track early offense efficiency"],"researchNote":"Advantage/disadvantage SSG formats used for decision training; widely cited in SSG literature.","tags":["transition","reads","conditioning","continuous"]},{"id":30,"name":"1v1 Throw & Go (Decision-Based)","category":"Offense","subcategory":"Decision-Making","effectiveness":88,"gameTransfer":100,"difficulty":"Intermediate","ageLevel":"All","timeMin":12,"players":"3+","tier":"A","source":"imported","description":"Offensive player catches live pass, defender closes out. Offense reads and attacks immediately — no dribbling warm-up allowed. Raw decision-making drill.","keyPoints":["Decision must happen before defender arrives","Triple threat is not the goal — attacking is","Vary pass location and timing","Track quality shot rate per session"],"researchNote":"Decision-based SSG principles align with representative practice research (MDPI, 2020).","tags":["1v1","reads","decision-making","game-like"]},{"id":31,"name":"3v3 Closeout-to-Live (SSG)","category":"Defense","subcategory":"Closeouts","effectiveness":89,"gameTransfer":100,"difficulty":"Intermediate","ageLevel":"All","timeMin":12,"players":"6+","tier":"A","source":"imported","description":"Each possession starts with a live closeout — defense must contain before playing live. Offense reads closeout angle to shoot, drive, or skip.","keyPoints":["Stutter before shooting distance","Offense must make a live read — no pre-planned attacks","Help must recover every time","Score by drill rules not standard basketball"],"researchNote":"SSGs couple perception-action and decision-making; supported by MDPI representative practice research.","tags":["closeout","SSG","defense","reads"]},{"id":32,"name":"Closeout 1-on-1 (Jr. NBA)","category":"Defense","subcategory":"Live 1v1","effectiveness":87,"gameTransfer":100,"difficulty":"Intermediate","ageLevel":"All","timeMin":10,"players":"2+","tier":"A","source":"imported","description":"Defender starts under basket, sprints to closeout, then plays live 1v1. Offense can shoot, drive, or reject. Pure perception-action training tool.","keyPoints":["No gambling — contain first","Contain angle cuts off baseline","Offense must use the closeout reaction","Track stop rate vs blow-by rate"],"researchNote":"Live 1v1 increases perception-action coupling vs shadow drills; MDPI representative practice evidence.","tags":["1v1","defense","live","perception"]},{"id":33,"name":"Continuous 3-on-2","category":"Team","subcategory":"Transition","effectiveness":78,"gameTransfer":80,"difficulty":"Beginner","ageLevel":"All","timeMin":12,"players":"6+","tier":"A","source":"imported","description":"Standard continuous 3v2 loop with rotation. Builds fast-break passing habits, conversion rate under pressure, and defensive recovery positioning.","keyPoints":["Pass ahead only when defender commits","Wing spacing at 3-point line","Trail player fills outside lane","Defense touches ball = rotate"],"researchNote":"SSGs effective for physical and skill outcomes per systematic review (SAGE Journals, 2025).","tags":["transition","passing","fast-break","beginner"]},{"id":34,"name":"Drive & Kick (3-Player) + Extra Pass","category":"Offense","subcategory":"Combination","effectiveness":79,"gameTransfer":80,"difficulty":"Beginner","ageLevel":"All","timeMin":10,"players":"4+","tier":"A","source":"imported","description":"Ball-handler drives and kicks to wing, wing must swing or shoot based on simulated help positioning. Extra pass teaches kick-to-skip reads.","keyPoints":["Drive with intention — make help move","Kick BEFORE defender recovers","Kickout receiver already in shooting pocket","Swing to corner on over-help"],"researchNote":"Drive-and-kick fundamentals in official Jr. NBA and NCAA youth coaching curriculum.","tags":["drive&kick","shooting","combo","fundamentals"]},{"id":35,"name":"4v4 Competitive Shell (Winner Stays)","category":"Defense","subcategory":"Team Defense","effectiveness":76,"gameTransfer":80,"difficulty":"Advanced","ageLevel":"15U+","timeMin":15,"players":"10+","tier":"A","source":"imported","description":"Competitive shell drill where offense and defense both play to score. Make-it-take-it format with winner-stays-in rotation. Elevates defensive intensity dramatically.","keyPoints":["Defense plays to stop, not survive","Offensive read — exploit breakdown","Communication breaks down under pressure — train it here","Coach tracks stops per game not time"],"researchNote":"Competition constraints raise intensity and realism in practice; supported in coaching literature.","tags":["defense","competitive","winner-stays","intensity"]},{"id":36,"name":"FIBA Mini-Basketball: SSG + Shooting Clinic","category":"Team","subcategory":"Small-Sided Game","effectiveness":83,"gameTransfer":100,"difficulty":"Beginner","ageLevel":"Youth","timeMin":20,"players":"4-8","tier":"A","source":"imported","description":"FIBA-structured youth practice combining small-sided games with focused shooting clinics. High touches per player, movement-based shooting, decision density.","keyPoints":["Every player touches ball every possession","Shooting follows game-like movement","Constraints match development level","Track decisions per minute not just baskets"],"researchNote":"Small-sided/conditioned games enhance decision-making per constraints-led literature (MDPI, 2020).","tags":["FIBA","youth","SSG","touches"]},{"id":37,"name":"USA Basketball 3x3 Drills & Concepts","category":"Team","subcategory":"Small-Sided Game","effectiveness":84,"gameTransfer":100,"difficulty":"Intermediate","ageLevel":"All","timeMin":15,"players":"6+","tier":"A","source":"imported","description":"USA Basketball's official 3x3 framework covering spacing, screening, and defensive concepts. Forces all players to guard and attack simultaneously.","keyPoints":["No big-little separation — everyone handles and guards","Screen reads: reject, curl, pop","Defense must communicate screen coverages","Score with USA 3x3 point system"],"researchNote":"3x3/SSG formats promoted as transferable practice constraints by USA Basketball and PMC research.","tags":["3x3","SSG","USA Basketball","all-positions"]},{"id":38,"name":"4v4 Shell Drill (Defensive Positioning)","category":"Defense","subcategory":"Team Defense","effectiveness":68,"gameTransfer":80,"difficulty":"Intermediate","ageLevel":"15U+","timeMin":15,"players":"8+","tier":"B","source":"imported","description":"4v4 half-court with no live dribble. Offense passes to force rotations; defense must communicate deny, gap, and help positions correctly before going live.","keyPoints":["Verbalize every rotation","Ball-you-man triangle","Step to deny on every skip","No early live — earn it with positioning"],"researchNote":"Widely used defensive teaching progression; featured in FIBA Europe coaching resources.","tags":["defense","shell","positioning","team"]},{"id":39,"name":"Close Out – Box Out Drill (USA Basketball)","category":"Defense","subcategory":"Closeouts","effectiveness":73,"gameTransfer":80,"difficulty":"Beginner","ageLevel":"All","timeMin":8,"players":"2+","tier":"B","source":"imported","description":"Defender closes out, contests shot, then immediately pivots to box out the shooter. Trains the critical transition from contest to rebound.","keyPoints":["Stutter at arm's reach, no foul","Turn and find shooter on flight of ball","Wide base box-out","Outlet pass after rebound"],"researchNote":"Official USA Basketball drill resource; featured in their skills and drills player advanced library.","tags":["defense","rebounding","closeout","two-sided"]},{"id":40,"name":"Shooting Routine by Spots + Point System","category":"Shooting","subcategory":"Volume","effectiveness":68,"gameTransfer":80,"difficulty":"Beginner","ageLevel":"All","timeMin":12,"players":"Solo","tier":"B","source":"imported","description":"Shoot from designated spots with a self-scoring system (points per zone, multipliers for harder shots). Creates accountability and tracks progress over time.","keyPoints":["Chart makes per spot weekly","Change spot order for variability","Set a minimum score target","Track points-per-minute not just total makes"],"researchNote":"Variable spot practice aligns with contextual interference and random practice research findings.","tags":["shooting","routine","tracking","solo"]},{"id":41,"name":"Contextual Interference Free-Throw Practice","category":"Shooting","subcategory":"Free Throws","effectiveness":66,"gameTransfer":80,"difficulty":"Beginner","ageLevel":"All","timeMin":10,"players":"Solo","tier":"B","source":"imported","description":"Free throws interspersed with other tasks (conditioning, different shots) rather than blocked repetition. Proven to improve retention and in-game performance.","keyPoints":["Alternate between FT and other tasks","Test retention 48h later vs blocked practice","Routine must be identical each rep","Fatigue variation = game simulation"],"researchNote":"Study examined contextual interference vs specificity in basketball free throw learning (ScienceDirect, 2011).","tags":["free throws","CI","motor learning","retention"]},{"id":42,"name":"Retreat Dribble Drill (Jr. NBA)","category":"Ball Handling","subcategory":"Pressure Handling","effectiveness":65,"gameTransfer":80,"difficulty":"Beginner","ageLevel":"All","timeMin":8,"players":"2","tier":"B","source":"imported","description":"Ball-handler retreats to create space vs. an on-ball defender, then re-attacks. Teaches the retreat dribble as a tool not a habit.","keyPoints":["Retreat is purposeful — re-attack within 2 dribbles","Change of pace on re-attack","Never retreat toward the baseline","Track space created, not just the dribble"],"researchNote":"Used in official Jr. NBA youth teaching progressions for on-ball pressure response.","tags":["ball handling","pressure","create space","Jr. NBA"]},{"id":43,"name":"Kick Pass Drill (Jr. NBA)","category":"Passing","subcategory":"Drive & Kick","effectiveness":65,"gameTransfer":80,"difficulty":"Beginner","ageLevel":"All","timeMin":8,"players":"2+","tier":"B","source":"imported","description":"Driver penetrates and kicks to a designated receiver at the exact right moment — before help fully recovers. Teaches pass timing as a skill, not an afterthought.","keyPoints":["Kick before help closes","Receiver already in shot pocket","Eye contact with receiver during drive","Non-dominant hand kick-out reps"],"researchNote":"Drive-and-kick timing emphasized in Jr. NBA youth curriculum as a core offensive skill.","tags":["passing","drive&kick","timing","Jr. NBA"]},{"id":44,"name":"Learner-Adapted Random Practice for Shooting Transfer","category":"Shooting","subcategory":"Motor Learning","effectiveness":64,"gameTransfer":80,"difficulty":"Intermediate","ageLevel":"All","timeMin":15,"players":"Solo","tier":"B","source":"imported","description":"Random practice scheduling where shooting distance, location, and footwork pattern changes every rep. No two consecutive reps are the same. Dramatically improves transfer.","keyPoints":["Plan randomization before session","Never do blocked reps before a game","Test retention 48h post-session","Log distance + location of every make/miss"],"researchNote":"Random practice improved shooting success and transfer in basketball; peer-reviewed study (Taylor & Francis, 2019).","tags":["motor learning","transfer","random practice","shooting"]},{"id":45,"name":"Immersive Video Decision Training","category":"Offense","subcategory":"Perceptual Training","effectiveness":63,"gameTransfer":60,"difficulty":"Advanced","ageLevel":"Elite Youth+","timeMin":20,"players":"Solo","tier":"B","source":"imported","description":"Players watch immersive video of real possessions and make live decisions on a controller or verbally. Used by elite programs to train anticipation without physical fatigue.","keyPoints":["Use actual game film of upcoming opponents","Pause before decision point","Track decision accuracy per session","Pair with on-court reps for coupling"],"researchNote":"Immersive video training improves decision-making in elite youth basketball; Frontiers in Psychology study.","tags":["decision-making","video","perceptual","off-court"]},{"id":46,"name":"Zigzag Practice (USA Basketball)","category":"Ball Handling","subcategory":"Change of Direction","effectiveness":59,"gameTransfer":60,"difficulty":"Beginner","ageLevel":"Youth-HS","timeMin":8,"players":"Solo","tier":"C","source":"imported","description":"Full-court zigzag dribbling with directional changes at each cone. Builds footwork and control fundamentals. Good warm-up or intro drill.","keyPoints":["Push off outside foot at each change","Keep dribble below knee","Head up — see floor","Progress to crossover/between legs"],"researchNote":"Included in official USA Basketball and Jr. NBA drill libraries for directional change fundamentals.","tags":["ball handling","COD","beginner","youth"]},{"id":47,"name":"The Zig Zag Drill (Jr. NBA)","category":"Ball Handling","subcategory":"Change of Direction","effectiveness":59,"gameTransfer":60,"difficulty":"Beginner","ageLevel":"Youth","timeMin":8,"players":"Solo","tier":"C","source":"imported","description":"Jr. NBA version of zigzag dribble with cones — structured for younger players with specific angle markers and one-dribble change requirements.","keyPoints":["Stay low through every angle","Ball stays in front of body","Alternate hands on each cone","Slow first, fast second"],"researchNote":"Included in Jr. NBA starter-level youth practice plans; officially recommended for ages 6–10.","tags":["ball handling","youth","Jr. NBA","beginner"]},{"id":48,"name":"Random-Practice Jump Shot (3 Distances)","category":"Shooting","subcategory":"Motor Learning","effectiveness":71,"gameTransfer":80,"difficulty":"Beginner","ageLevel":"All","timeMin":12,"players":"Solo","tier":"B","source":"imported","description":"Shoot jump shots from three different distances in random order with no repeats. Applies contextual interference principles to dramatically improve retention and transfer.","keyPoints":["Randomize spots — no patterns","Full reset between each rep","Track retention test 48h after session","Do NOT do blocked practice of same shot before game"],"researchNote":"Contextual interference in novice basketball shooting improves retention and transfer (PMC 2025 study).","tags":["shooting","contextual interference","motor learning","retention"]},{"id":49,"name":"Explosive First Step – Tennis Ball Reaction","category":"Athleticism","subcategory":"Reaction","effectiveness":57,"gameTransfer":60,"difficulty":"Beginner","ageLevel":"All","timeMin":8,"players":"2","tier":"C","source":"imported","description":"Defender holds a tennis ball at shoulder height, drops it, offensive player must catch before second bounce. Trains perceptual quickness and first-step acceleration.","keyPoints":["Stay in athletic stance, not standing","React to drop not visual cue","Progress to multiple balls","Link to ball-handling or finishing after"],"researchNote":"Reaction-based training supports perceptual components of movement; Frontiers in Psychology study.","tags":["athleticism","reaction","first step","tennis ball"]},{"id":50,"name":"Player Skills & Drills Library (USA Basketball Advanced)","category":"Reference","subcategory":"Multi-Skill","effectiveness":57,"gameTransfer":60,"difficulty":"Intermediate","ageLevel":"All","timeMin":0,"players":"Varies","tier":"C","source":"imported","description":"Official USA Basketball advanced drill library spanning all skill categories. Most useful as a curriculum planning reference for coaches building practice structure.","keyPoints":["Filter by skill gap, not preference","Prioritize transfer-rated drills","Use library to build progressions not pick individual drills","Cross-reference with SSG research for selection"],"researchNote":"Official drill library covering major skill categories; valuable as reference, not standalone training tool.","tags":["library","USA Basketball","reference","curriculum"]},{"id":51,"name":"4 Passing Drills (USA Basketball)","category":"Passing","subcategory":"Fundamentals","effectiveness":56,"gameTransfer":60,"difficulty":"Beginner","ageLevel":"All","timeMin":10,"players":"4+","tier":"C","source":"imported","description":"Official USA Basketball fundamentals set: chest, bounce, overhead, and outlet passes with movement. Teaches passing mechanics and timing for all four primary pass types.","keyPoints":["Step into every pass","Wrist snap generates backspin","Look away before passing","Pace changes on movement passes"],"researchNote":"Official USA Basketball fundamentals resource for intro-level player development programs.","tags":["passing","fundamentals","USA Basketball","youth"]},{"id":52,"name":"Euro-Step Layup Drill","category":"Finishing","subcategory":"Footwork","effectiveness":52,"gameTransfer":60,"difficulty":"Beginner","ageLevel":"All","timeMin":8,"players":"Solo","tier":"C","source":"imported","description":"Drive at full speed, plant hard, step laterally past a simulated defender, and finish opposite side. Builds footwork, deceleration, and body control.","keyPoints":["Two legal gather steps — use both","Plant foot creates direction change","Finish off wrong foot confidently","Add a dummy defender for game realism"],"researchNote":"Included in official youth drill libraries (Jr. Jazz, Jr. NBA) as a key finishing progression.","tags":["finishing","footwork","euro-step","beginner"]},{"id":53,"name":"Catch, Turn & Shoot (Jr. NBA)","category":"Shooting","subcategory":"Footwork","effectiveness":49,"gameTransfer":60,"difficulty":"Beginner","ageLevel":"All","timeMin":8,"players":"2","tier":"C","source":"imported","description":"Player catches a pass with back to basket, pivots to square up, and shoots. Develops footwork fundamentals for wing catch situations.","keyPoints":["Catch with feet ready to pivot","Front pivot vs reverse pivot based on defender","Shot prep during the turn","No extra dribbles before shooting"],"researchNote":"Foundational technique in official Jr. NBA and USA Basketball shooting progressions.","tags":["shooting","footwork","fundamentals","Jr. NBA"]},{"id":54,"name":"USA Basketball Shooting Drills (Calipari/Klay)","category":"Shooting","subcategory":"Fundamentals","effectiveness":47,"gameTransfer":60,"difficulty":"Beginner","ageLevel":"All","timeMin":12,"players":"2","tier":"C","source":"imported","description":"Official USA Basketball shooting drill set featuring footwork, balance, and rhythm concepts endorsed by elite coaches. Structured but low game-context.","keyPoints":["Same mechanics every rep","Footwork is first — shot is second","Spot-up and off-dribble variations","Use as foundation, not ceiling"],"researchNote":"Official USA Basketball shooting fundamentals resource; referenced in their core player development library.","tags":["shooting","fundamentals","USA Basketball","form"]},{"id":55,"name":"1-Step Form Shooting (Jr. NBA)","category":"Shooting","subcategory":"Form","effectiveness":40,"gameTransfer":40,"difficulty":"Beginner","ageLevel":"All","timeMin":8,"players":"Solo","tier":"C","source":"imported","description":"One step from basket, pure form shooting with emphasis on alignment, balance, and release mechanics. Entry-level shooting drill with very high rep density.","keyPoints":["Elbow under ball at setup","Eyes on back of rim","Wrist snap to full extension","Hold follow-through until ball hits net"],"researchNote":"Mechanics emphasized in official shooting fundamentals resources (USA Basketball, Jr. NBA).","tags":["shooting","form","beginner","mechanics"]},{"id":56,"name":"Shot Blocking Tip Drill (USA Basketball)","category":"Defense","subcategory":"Rim Protection","effectiveness":39,"gameTransfer":40,"difficulty":"Beginner","ageLevel":"All","timeMin":6,"players":"Solo","tier":"C","source":"imported","description":"Player tips the ball above rim repeatedly to build timing, explosiveness, and hand-eye coordination for shot blocking. Can add catch-and-tip variations.","keyPoints":["Explode from two-foot base","Block with inside hand","Tip up, not across — no fouls","Time with jump not arm swing"],"researchNote":"Official USA Basketball drill resource for building rim protection and shot-blocking fundamentals.","tags":["defense","rim protection","shot blocking","solo"]},{"id":57,"name":"3-Man Weave (Transition Warm-Up)","category":"Passing","subcategory":"Warm-Up","effectiveness":37,"gameTransfer":40,"difficulty":"Beginner","ageLevel":"All","timeMin":8,"players":"6+","tier":"C","source":"imported","description":"Three-man weave pattern full-court ending in layup. A classic warm-up drill — but low decision demand and scripted movement limit development value.","keyPoints":["Fill outside lanes on passes","Pass and go behind the receiver","Don't pre-determine your path","Use as warm-up ONLY — replace with SSGs for development"],"researchNote":"Coaching analysis notes this is less representative than live SSGs; recommended only as warm-up, not primary development tool.","tags":["warm-up","passing","scripted","low-transfer"]},{"id":58,"name":"FLORIDA — Roll & Catch Spot Shooting","category":"Shooting","subcategory":"Form + Footwork","effectiveness":100,"gameTransfer":100,"difficulty":"Beginner","ageLevel":"All","timeMin":25,"players":"Solo","tier":"S","source":"scholars-elite","makes":75,"description":"The Scholars Elite pre-workout standard. The shooter rolls the ball to themselves and either catches on the inside foot, ready to shoot, or catches into a reverse pivot. At each of 5 spots they make 5 off the catch, 5 going left and 5 going right: 15 makes per spot, 75 total. Add the 20-make Mikan Complex and the player has 95 makes before the workout starts. The footwork read on every catch (inside foot or reverse pivot) is a game decision trained 75 times a session.","keyPoints":["Roll the ball out and read your catch — inside foot or reverse pivot based on body position","At each spot: 5 makes off the catch, 5 going left, 5 going right","5 spots × 15 makes = 75 makes","Shoot in rhythm — the catch IS the shot prep. No gather, no setup dribble"],"researchNote":"Developed by Keil Moore and run at every Scholars Elite workout. Rolling the ball out to yourself recreates the catch a shooter gets off a screen, a kick-out or a relocation, so a player training alone still has to read the catch 75 times.","tags":["florida","scholars-elite","form-shooting","footwork","solo","pre-workout","proprietary"],"featured":true},{"id":59,"name":"FLORIDA — Mikan Complex (Facing + Backwards)","category":"Finishing","subcategory":"Mikan Variation","effectiveness":80,"gameTransfer":85,"difficulty":"Beginner","ageLevel":"All","timeMin":5,"players":"Solo","tier":"A","source":"scholars-elite","makes":20,"description":"The second component of the Florida pre-workout sequence. Player makes 10 standard Mikans facing the rim (alternating hands), immediately followed by 10 backwards Mikans with their back to the backboard. The backwards Mikan builds touch, proprioception and body control the standard version can't. With Roll & Catch Spot Shooting, Florida reaches 95 makes before the workout begins.","keyPoints":["10 facing Mikans first — soft touch, no gaps in rhythm, continuous","10 backwards Mikans immediately after — no stopping, no break in sequence","Backwards Mikan develops body control and touch that transfers to contested finishes","This is makes 76–95 in the Florida pre-workout sequence"],"researchNote":"The second half of the Florida warm-up. The backwards Mikan adds a body-control and touch problem the standard version never asks for. With Roll & Catch, a player has 95 makes before the workout starts.","tags":["florida","scholars-elite","mikan","finishing","backwards","solo","pre-workout"],"featured":true},{"id":60,"name":"FLORIDA — Swish Finisher (20 Consecutive)","category":"Shooting","subcategory":"Pressure Finishing","effectiveness":97,"gameTransfer":98,"difficulty":"Intermediate","ageLevel":"All","timeMin":15,"players":"Solo","tier":"S","source":"scholars-elite","makes":20,"description":"The closer every Scholars Elite session ends on. Player must make 20 swishes in a row — pure net, no iron — across the 5 Florida spots. Miss one or touch the rim and the streak resets. The swish requirement removes every bad-habit make from the count and forces precise arc and release under self-imposed pressure.","keyPoints":["SWISHES ONLY — touching the rim resets the count. No exceptions.","20 consecutive, all 5 spots — distribute makes however you must, but the streak cannot break","If you miss, you keep going — the drill ends when you finish, not when you're tired","The psychological anchor: every Scholars Elite workout ends on earned excellence"],"researchNote":"Scholars Elite proprietary workout finisher. A consecutive-swish requirement under self-competition is about as much solo shooting pressure as you can create without a defender, and the no-rim standard forces arc and release precision that plain make-counting misses.","tags":["florida","scholars-elite","swish","pressure","consecutive","solo","workout-finisher","proprietary"],"featured":true}];
+
+/* ---------- data ---------- */
+const parseMin = s => { if (!s || s === "Varies" || s === "Solo") return 1; if (s === "Team") return 10; const m = String(s).match(/^(\d+)/); return m ? parseInt(m[1], 10) : 1; };
+const all = DRILLS.map(d => Object.assign({}, d, { minP: parseMin(d.players) }));
+const ranked = all.filter(d => !d.featured)
+  .sort((a, b) => b.effectiveness - a.effectiveness || b.gameTransfer - a.gameTransfer || a.id - b.id)
+  .map((d, i) => Object.assign(d, { rank: i + 1 }));
+const gym = [58, 59, 60].map(id => all.find(d => d.id === id));
+const byId = new Map(all.map(d => [d.id, d]));
+const CATS = ["Shooting","Ball Handling","Finishing","Offense","Defense","Footwork","Passing","Team","Athleticism","Conditioning","Reference"];
+const FLOW = ["Athleticism","Footwork","Ball Handling","Passing","Finishing","Shooting","Offense","Defense","Team","Conditioning"];
+const LEVELS = { Beginner: 0, Intermediate: 1, Advanced: 2 };
+const OPEN = [58, 59], CLOSE = [60];
+
+/* ---------- state ---------- */
+const KEY = "hoopthink-drill-index";
+const LIVE = /(^|\.)hoopthink\.net$/.test(location.hostname) || /\.netlify\.app$/.test(location.hostname);
+const S = { view: "index", players: 0, q: "", cat: "All", sort: "rank", open: null, unlocked: false,
+  session: [], sessionName: "", gen: { minutes: 90, focus: [], bookends: true }, undo: null, armed: false, after: null };
+try {
+  const v = JSON.parse(localStorage.getItem(KEY) || "null");
+  if (v) {
+    S.unlocked = !!v.unlocked;
+    if (Array.isArray(v.session)) S.session = v.session.filter(id => byId.has(id));
+    if (typeof v.sessionName === "string") S.sessionName = v.sessionName;
+    if (Number.isInteger(v.players)) S.players = v.players;
+    if (v.gen) Object.assign(S.gen, v.gen);
+  }
+} catch (e) {}
+if (/[?&]unlocked=1/.test(location.search)) S.unlocked = true;
+function save() { try { localStorage.setItem(KEY, JSON.stringify({ unlocked: S.unlocked, session: S.session, sessionName: S.sessionName, players: S.players, gen: S.gen })); } catch (e) {} }
+save();
+
+/* ---------- helpers ---------- */
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+const plural = (n, w) => n + " " + w + (n === 1 ? "" : "s");
+const who = n => n >= 10 ? "10+ players" : plural(n, "player");
+const fits = d => !S.players || d.minP <= S.players;
+const setHash = h => { try { history.replaceState(null, "", h || location.pathname + location.search); } catch (e) {} };
+let toastT;
+function toast(msg) { const t = $("toast"); t.textContent = msg; t.hidden = false; clearTimeout(toastT); toastT = setTimeout(() => { t.hidden = true; }, 4200); }
+function copy(text, box, area, done) {
+  const fb = () => { area.value = text; box.hidden = false; area.focus(); area.select(); };
+  try { navigator.clipboard && navigator.clipboard.writeText ? navigator.clipboard.writeText(text).then(() => { box.hidden = true; done(); }, fb) : fb(); } catch (e) { fb(); }
+}
+
+/* ---------- header bits ---------- */
+function renderFacts() {
+  const s = ranked.filter(d => d.tier === "S").length;
+  const solo = ranked.filter(d => d.minP === 1).length;
+  $("facts").innerHTML = `<li><b class="dx-num">${ranked.length}</b>drills ranked</li><li><b class="dx-num">${s}</b>S-tier</li><li><b class="dx-num">${solo}</b>you can do alone</li><li><b class="dx-num">6</b>scoring factors</li>`;
+}
+function renderPlayers() {
+  $("pcount").innerHTML = [0,1,2,3,4,5,6,7,8,9,10].map(n => {
+    const c = n ? ranked.filter(d => d.minP <= n).length : ranked.length;
+    return `<button class="dx-pbtn${n ? "" : " any"}" data-players="${n}" aria-pressed="${S.players === n}" aria-label="${n ? who(n) : "Any number of players"}, ${c} drills"><span class="n">${n ? (n >= 10 ? "10+" : n) : "ANY"}</span><span class="c">${c}</span></button>`;
+  }).join("");
+  const n = S.players, c = n ? ranked.filter(d => d.minP <= n).length : ranked.length;
+  $("status").innerHTML = n ? `<b>${who(n)}</b> · ${c} drills fit your group` : "Pick a number and the index narrows to drills your group can run.";
+  $("locked").innerHTML = n && ranked.length - c ? `<b class="dx-num">${ranked.length - c}</b>need more players` : "";
+}
+
+/* ---------- index ---------- */
+function list() {
+  const q = S.q.trim().toLowerCase();
+  const out = ranked.filter(d => fits(d) && (S.cat === "All" || d.category === S.cat) &&
+    (!q || (d.name + " " + d.category + " " + d.subcategory + " " + d.tags.join(" ")).toLowerCase().includes(q)));
+  if (S.sort === "transfer") out.sort((a, b) => b.gameTransfer - a.gameTransfer || a.rank - b.rank);
+  else if (S.sort === "time") out.sort((a, b) => (a.timeMin || 999) - (b.timeMin || 999) || a.rank - b.rank);
+  else if (S.sort === "level") out.sort((a, b) => LEVELS[a.difficulty] - LEVELS[b.difficulty] || a.rank - b.rank);
+  else out.sort((a, b) => a.rank - b.rank);
+  return out;
+}
+function row(d, isGym) {
+  const inS = S.session.includes(d.id), open = S.open === d.id;
+  const time = d.timeMin > 0 ? d.timeMin + " min" : "—";
+  const stats = isGym
+    ? `<span><span class="dx-tier G">From our gym</span></span><span class="dx-cell"><span class="dx-lab">Makes</span>${d.makes}</span><span class="dx-cell"><span class="dx-lab">Time</span>${time}</span><span class="dx-cell"><span class="dx-lab">Players</span>${esc(d.players)}</span>`
+    : `<span><span class="dx-tier ${d.tier}">${d.tier}-TIER</span><span class="dx-lvl">${esc(d.difficulty)}</span></span>
+       <span class="dx-score"><span class="dx-lab">Score</span><span class="v">${d.effectiveness}</span><span class="dx-bar"><i class="${d.effectiveness >= 75 ? "" : "lo"}" style="width:${d.effectiveness}%"></i></span></span>
+       <span class="dx-score"><span class="dx-lab">Transfer</span><span class="v">${d.gameTransfer}</span><span class="dx-bar"><i class="${d.gameTransfer >= 75 ? "" : "lo"}" style="width:${d.gameTransfer}%"></i></span></span>
+       <span class="dx-cell"><span class="dx-lab">Time</span>${time}</span>
+       <span class="dx-cell"><span class="dx-lab">Players</span>${esc(d.players)}</span>`;
+  const locked = `<div class="dx-lockbox"><b>${d.keyPoints.length} coaching points and the research note</b><span>Free with your email, along with the workout builder.</span><button class="dx-btn" data-gate="points">Unlock free</button></div>`;
+  const pro = `<div><h4>Coaching points</h4><ul class="dx-kp">${d.keyPoints.map(k => `<li>${esc(k)}</li>`).join("")}</ul><p class="dx-note">${esc(d.researchNote)}</p></div>`;
+  const detail = open ? `<div class="dx-detail" id="det-${d.id}">
+      <div><h4>The drill</h4><p>${esc(d.description)}</p>
+        <div class="dx-facts2"><span>Age <b>${esc(d.ageLevel)}</b></span><span>Level <b>${esc(d.difficulty)}</b></span><span>Skill <b>${esc(d.subcategory)}</b></span></div></div>
+      ${S.unlocked ? pro : locked}
+    </div>` : "";
+  return `<article class="dx-drill${!isGym && d.rank <= 3 ? " top" : ""}">
+    <div class="dx-row">
+      <button class="dx-main" data-open="${d.id}" aria-expanded="${open}" aria-controls="det-${d.id}">
+        <span class="dx-rank dx-num">${isGym ? "FL" : "#" + d.rank}</span>
+        <span class="dx-name"><span class="nm">${esc(isGym ? d.name.replace("FLORIDA — ", "") : d.name)}</span><span class="sub">${esc(d.category)} · ${esc(d.subcategory)}</span></span>
+        <span class="dx-stats">${stats}</span>
+      </button>
+      <button class="dx-add" data-add="${d.id}" aria-pressed="${inS}" aria-label="${inS ? "Remove from workout" : "Add to workout"}: ${esc(d.name)}">${inS ? "✓" : "+"}</button>
+    </div>${detail}
+  </article>`;
+}
+function renderIndex() {
+  const base = ranked.filter(fits), counts = {};
+  base.forEach(d => { counts[d.category] = (counts[d.category] || 0) + 1; });
+  $("cats").innerHTML = ["All"].concat(CATS).filter(c => c === "All" || counts[c]).map(c =>
+    `<button class="dx-chip" data-cat="${esc(c)}" aria-pressed="${S.cat === c}">${esc(c)}<span class="k dx-num">${c === "All" ? base.length : counts[c]}</span></button>`).join("");
+  const showGym = !S.q && (S.cat === "All" || ["Shooting", "Finishing"].includes(S.cat));
+  $("gym").hidden = !showGym;
+  if (showGym) $("gym-list").innerHTML = gym.filter(d => S.cat === "All" || d.category === S.cat).map(d => row(d, true)).join("");
+  const l = list();
+  const anyF = S.q || S.cat !== "All";
+  $("results").innerHTML = `<span>Showing <b class="dx-num">${l.length}</b> of ${ranked.length} ranked drills</span>${anyF ? '<button class="dx-link" id="clear-f">Clear filters</button>' : ""}`;
+  $("list").innerHTML = l.length
+    ? `<div class="dx-lhead"><span>Rank</span><span>Drill</span><span>Tier</span><span>Score</span><span>Transfer</span><span>Time</span><span>Players</span></div>` + l.map(d => row(d, false)).join("")
+    : `<p class="dx-empty">No drills match.${S.players ? " Try more players, or" : ""} clear a filter to widen the list.</p>`;
+}
+
+/* ---------- session ---------- */
+const sess = () => S.session.map(id => byId.get(id)).filter(Boolean);
+function stats() {
+  const s = sess();
+  return { count: s.length, time: s.reduce((t, d) => t + (d.timeMin || 0), 0), makes: s.reduce((t, d) => t + (d.makes || 0), 0),
+    need: s.reduce((m, d) => Math.max(m, d.minP), 0), transfer: s.length ? Math.round(s.reduce((t, d) => t + d.gameTransfer, 0) / s.length) : 0,
+    cats: [...new Set(s.map(d => d.category))] };
+}
+function toggle(id) {
+  const i = S.session.indexOf(id);
+  if (i >= 0) S.session.splice(i, 1);
+  else {
+    const c = S.session.findIndex(x => CLOSE.includes(x));
+    if (c >= 0 && !CLOSE.includes(id)) S.session.splice(c, 0, id); else S.session.push(id);
+    toast("Added to your workout");
+  }
+  S.undo = null; S.armed = false; save(); render();
+}
+function seg(el, vals, cur, key, lab) {
+  el.innerHTML = vals.map(v => `<button class="dx-chip" data-${key}="${esc(v)}" aria-pressed="${Array.isArray(cur) ? cur.includes(v) : cur === v}">${esc(lab ? lab(v) : v)}</button>`).join("");
+}
+function renderBuilder() {
+  $("builder-locked").hidden = S.unlocked;
+  $("builder-open").hidden = !S.unlocked;
+  $("tab-lock").style.display = S.unlocked ? "none" : "";
+  if (!S.unlocked) return;
+  const st = stats(), n = S.players;
+  $("gen-using").innerHTML = n ? `Building for <b>${who(n)}</b>, from the count above.` : `Players: <b>any</b>. Set your count above so it only picks drills your group can run.`;
+  seg($("gen-min"), [30, 45, 60, 90, 120], S.gen.minutes, "min", v => v + " min");
+  seg($("gen-focus"), CATS.filter(c => c !== "Reference"), S.gen.focus, "focus");
+  $("gen-book").checked = S.gen.bookends;
+  $("undo").hidden = !S.undo;
+  if (document.activeElement !== $("sname")) $("sname").value = S.sessionName;
+  $("sstats").innerHTML = [["Drills", st.count], ["Minutes", st.time], ["Makes", st.makes || "—", "hi"], ["Avg transfer", st.count ? st.transfer : "—"], ["Players needed", st.need || "—"]]
+    .map(([l, v, c]) => `<div class="dx-sstat"><div class="v${c ? " " + c : ""}">${v}</div><div class="l">${l}</div></div>`).join("");
+  let v = "";
+  if (st.count) {
+    if (!n) v = `<div class="dx-verdict info">This workout needs at least ${plural(st.need, "player")}. Set your count above to check it.</div>`;
+    else if (st.need > n) v = `<div class="dx-verdict bad">Needs ${st.need} players and you have ${n >= 10 ? "10+" : n}. Pull the flagged drills or add players.</div>`;
+    else v = `<div class="dx-verdict ok">Every drill works with your ${who(n)}.</div>`;
+  }
+  $("verdict").innerHTML = v;
+  $("coverage").innerHTML = st.cats.length ? `<span class="dx-label">Skills covered</span>` + st.cats.map(c => `<span class="c">${esc(c)}</span>`).join("") : "";
+  const s = sess();
+  $("slist").innerHTML = s.map((d, i) => {
+    const over = n && d.minP > n, g = !!d.featured;
+    return `<li class="dx-sitem${over ? " over" : ""}${g ? " gym" : ""}">
+      <div class="dx-mv">
+        <button data-move="${i}" data-dir="-1" ${i ? "" : "disabled"} aria-label="Move up"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 15 6-6 6 6"/></svg></button>
+        <button data-move="${i}" data-dir="1" ${i === s.length - 1 ? "disabled" : ""} aria-label="Move down"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg></button>
+      </div>
+      <span class="dx-sidx dx-num">${i + 1}</span>
+      <div class="dx-sbody"><div class="nm">${esc(d.name)}</div>
+        <div class="dx-smeta">${g ? '<span class="dx-tier G">Florida</span>' : `<span class="dx-tier ${d.tier}">${d.tier}</span>`}<span><b>${d.timeMin || 0}</b> min</span>${d.makes ? `<span><b>${d.makes}</b> makes</span>` : ""}<span>${esc(d.players)}</span>${over ? `<span class="need">Needs ${d.minP}</span>` : ""}</div></div>
+      <button class="dx-rm" data-rm="${d.id}" aria-label="Remove ${esc(d.name)}"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button>
+    </li>`;
+  }).join("");
+  $("slist").hidden = !s.length; $("sactions").hidden = !s.length;
+  if (!s.length) $("plan-fallback").hidden = true;
+  $("sempty").innerHTML = s.length ? "" : `<div class="dx-sempty"><b>No drills yet</b><p>Use Build it for me, or tap + on any drill in the index to put the workout together yourself.</p><button class="dx-btn ghost" id="add-florida">Start with the Florida warm-up</button></div>`;
+  $("clear-session").textContent = S.armed ? "Tap again to clear" : "Clear";
+}
+function plan() {
+  const st = stats(), n = S.players, out = [(S.sessionName || "My workout").toUpperCase(),
+    `${n ? who(n) + " · " : ""}${plural(st.count, "drill")} · ${st.time} min${st.makes ? " · " + st.makes + " makes" : ""}`, ""];
+  sess().forEach((d, i) => { out.push(`${i + 1}. ${d.name} (${d.timeMin || 0} min, ${d.players})`); out.push(`   ${d.keyPoints[0]}`); });
+  out.push("", "Built with The Drill Index · hoopthink.net/drills");
+  return out.join("\n");
+}
+function build() {
+  const n = S.players, mins = S.gen.minutes; let budget = mins; const open = [], close = [];
+  if (S.gen.bookends) {
+    [[58, open], [60, close], [59, open]].forEach(([id, a]) => { const d = byId.get(id); if (d.timeMin <= budget) { a.push(id); budget -= d.timeMin; } });
+    open.sort((a, b) => OPEN.indexOf(a) - OPEN.indexOf(b));
+  }
+  const val = d => (d.effectiveness + d.gameTransfer) / 2 + (n >= 2 && d.minP >= 2 ? 4 : 0);
+  const pool = ranked.filter(d => d.category !== "Reference" && d.timeMin > 0 && fits(d)).sort((a, b) => val(b) - val(a));
+  const pick = [], subs = new Set(), per = {};
+  const take = d => { pick.push(d); subs.add(d.subcategory); per[d.category] = (per[d.category] || 0) + 1; budget -= d.timeMin; };
+  const ok = d => !pick.includes(d) && !subs.has(d.subcategory) && d.timeMin <= budget;
+  const f = S.gen.focus;
+  if (f.length) { let go = true; while (go && budget > 0) { go = false; for (const c of f) { const d = pool.find(x => x.category === c && ok(x)); if (d) { take(d); go = true; } } } }
+  else for (const cap of [2, 3]) for (const d of pool) if (ok(d) && (per[d.category] || 0) < cap) take(d);
+  pick.sort((a, b) => FLOW.indexOf(a.category) - FLOW.indexOf(b.category) || a.rank - b.rank);
+  S.undo = { session: S.session.slice(), sessionName: S.sessionName };
+  S.session = open.concat(pick.map(d => d.id), close);
+  S.sessionName = `${n ? (n >= 10 ? "10+ players" : n === 1 ? "Solo" : n + " players") : "Open gym"}, ${mins} minutes, ${f.length ? f.join(" + ").toLowerCase() : "balanced"}`;
+  S.armed = false; save(); render();
+}
+function renderBar() {
+  const st = stats(), show = st.count > 0 && S.view !== "builder";
+  $("sbar").hidden = !show; document.body.style.paddingBottom = show ? "76px" : ""; $("tab-count").hidden = !st.count; $("tab-count").textContent = st.count;
+  if (show) $("sbar-txt").innerHTML = `<b>Your workout</b>${plural(st.count, "drill")} · ${st.time} min${st.makes ? " · " + st.makes + " makes" : ""}`;
+}
+
+/* ---------- gate ---------- */
+const GATE = {
+  points: ["Unlock the full Drill Index", "Free. Enter your email to unlock every drill’s coaching points and research notes, plus the workout builder. You’ll also get the HoopThink Briefing when it launches December 1."],
+  builder: ["Unlock the workout builder", "Free. Enter your email to build workouts for your group and unlock every drill’s coaching points. You’ll also get the HoopThink Briefing when it launches December 1."],
+  add: ["Save drills to a workout", "Free. Enter your email to build workouts and unlock every drill’s coaching points. You’ll also get the HoopThink Briefing when it launches December 1."]
+};
+let lastFocus = null;
+function openGate(kind, after) {
+  S.after = after || null;
+  const g = GATE[kind] || GATE.points;
+  $("gate-h").textContent = g[0]; $("gate-sub").textContent = g[1]; $("gate-err").hidden = true;
+  lastFocus = document.activeElement; $("gate").hidden = false; $("g-email").focus();
+}
+function closeGate() { $("gate").hidden = true; if (lastFocus) lastFocus.focus(); }
+function unlock(msg) {
+  S.unlocked = true; save(); $("gate").hidden = true;
+  const a = S.after; S.after = null;
+  if (a && a.add) { if (!S.session.includes(a.add)) S.session.push(a.add); save(); }
+  if (a && a.view) setView(a.view);
+  render(); toast(msg);
+}
+$("gate-form").addEventListener("submit", e => {
+  e.preventDefault();
+  const form = e.target, email = $("g-email");
+  if (!email.value || !email.checkValidity()) { $("gate-err").textContent = "Enter a full email address, like you@example.com."; $("gate-err").hidden = false; email.focus(); return; }
+  if (!LIVE) { unlock("Preview: unlocked here, but this signup wasn't recorded."); return; }
+  const btn = $("gate-submit"); btn.disabled = true; btn.textContent = "Unlocking…";
+  fetch("/", { method: "POST", headers: { "Content-Type": "application/x-www-form-urlencoded" }, body: new URLSearchParams(new FormData(form)).toString() })
+    .then(r => { if (!r.ok) throw new Error(r.status); unlock("Unlocked. You’re on the HoopThink Briefing list."); })
+    .catch(() => { try { save(); } catch (err) {} form.submit(); })
+    .finally(() => { btn.disabled = false; btn.textContent = "Unlock the index"; });
+});
+
+/* ---------- views ---------- */
+function setView(v) {
+  S.view = v === "builder" ? "builder" : "index";
+  $("view-index").hidden = S.view !== "index"; $("view-builder").hidden = S.view !== "builder";
+  $("tab-index").setAttribute("aria-selected", String(S.view === "index"));
+  $("tab-builder").setAttribute("aria-selected", String(S.view === "builder"));
+  renderBar();
+}
+function render() { renderPlayers(); renderIndex(); renderBuilder(); renderBar(); }
+
+document.addEventListener("click", e => {
+  const t = e.target.closest("button"); if (!t) return;
+  const ds = t.dataset;
+  if (ds.view) { setView(ds.view); setHash(ds.view === "builder" ? "#builder" : ""); return; }
+  if (ds.players !== undefined) { S.players = +ds.players; save(); render(); return; }
+  if (ds.open) { const id = +ds.open; S.open = S.open === id ? null : id; renderIndex(); return; }
+  if (ds.add) { const id = +ds.add; if (!S.unlocked) { openGate("add", { add: id }); return; } toggle(id); return; }
+  if (ds.rm) { toggle(+ds.rm); return; }
+  if (ds.gate) { openGate(ds.gate, ds.gate === "builder" ? { view: "builder" } : null); return; }
+  if (ds.cat) { S.cat = ds.cat; renderIndex(); return; }
+  if (ds.min) { S.gen.minutes = +ds.min; save(); renderBuilder(); return; }
+  if (ds.focus) { const i = S.gen.focus.indexOf(ds.focus); i >= 0 ? S.gen.focus.splice(i, 1) : S.gen.focus.push(ds.focus); save(); renderBuilder(); return; }
+  if (ds.move !== undefined) { const i = +ds.move, j = i + (+ds.dir); if (j < 0 || j >= S.session.length) return; [S.session[i], S.session[j]] = [S.session[j], S.session[i]]; S.undo = null; save(); renderBuilder(); return; }
+  switch (t.id) {
+    case "clear-f": S.q = ""; $("q").value = ""; S.cat = "All"; renderIndex(); break;
+    case "gen-go": build(); $("undo-text").textContent = "Session replaced."; break;
+    case "undo-btn": if (S.undo) { S.session = S.undo.session; S.sessionName = S.undo.sessionName; S.undo = null; save(); render(); } break;
+    case "add-florida": S.session = OPEN.concat(CLOSE); if (!S.sessionName) S.sessionName = "Florida day"; save(); render(); break;
+    case "clear-session":
+      if (!S.armed) { S.armed = true; renderBuilder(); return; }
+      S.undo = { session: S.session.slice(), sessionName: S.sessionName }; S.session = []; S.sessionName = ""; S.armed = false; save(); render(); $("undo-text").textContent = "Workout cleared."; return;
+    case "copy-plan": copy(plan(), $("plan-fallback"), $("plan-text"), () => { t.textContent = "Copied"; setTimeout(() => { t.textContent = "Copy the workout"; }, 2000); }); break;
+    case "sbar-open": setView("builder"); setHash("#builder"); window.scrollTo({ top: $("tab-builder").getBoundingClientRect().top + window.scrollY - 20 }); break;
+    case "gate-close": closeGate(); break;
+  }
+  if (t.id !== "clear-session" && S.armed) { S.armed = false; renderBuilder(); }
+});
+$("gate").addEventListener("click", e => { if (e.target.id === "gate") closeGate(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("gate").hidden) closeGate(); });
+$("q").addEventListener("input", e => { S.q = e.target.value; renderIndex(); });
+$("sort").addEventListener("change", e => { S.sort = e.target.value; renderIndex(); });
+$("sname").addEventListener("input", e => { S.sessionName = e.target.value; save(); });
+$("gen-book").addEventListener("change", e => { S.gen.bookends = e.target.checked; save(); });
+
+renderFacts(); render();
+setView(location.hash === "#builder" ? "builder" : "index");
+if (/[?&]unlocked=1/.test(location.search)) toast("Unlocked. You’re on the HoopThink Briefing list.");
+</script>
+</body>
+</html>
