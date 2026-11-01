@@ -1,29 +1,138 @@
-/* HoopThink long-form article pages — builds on /style.css tokens */
-.article{padding:44px 0 64px}
-.article .wrap{max-width:760px}
-.article .kicker{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-family:BST;font-weight:700;font-size:15px;color:var(--white);margin:0 0 18px}
+/* HoopThink shared stylesheet: homepage, articles, section indexes.
+   Builds on /style.css (fonts + color tokens). Load it after style.css.
+   CSS only. No JavaScript is used for layout anywhere on the site. */
+
+/* ---------- 1. Layout + type tokens ---------- */
+:root{
+  --gutter:24px;      /* side padding: 24 phone, 32 desktop */
+  --measure:720px;    /* text column */
+  --wide:1080px;      /* hero image, card strips */
+  --section:56px;     /* space between major sections: 56 phone, 72 desktop */
+  --head-gap:24px;    /* heading -> the copy under it: 24 phone, 28 desktop */
+  --lh-body:1.65;
+  --lh-head:1.15;
+  --radius:6px;
+}
+@media (min-width:720px){
+  :root{--gutter:32px;--section:72px;--head-gap:28px}
+}
+
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{line-height:var(--lh-body)}
+h1{line-height:var(--lh-head)}
+
+.wrap{max-width:calc(var(--wide) + 2 * var(--gutter));padding:0 var(--gutter)}
+.wrap.col{max-width:calc(var(--measure) + 2 * var(--gutter))}
+
+/* screen-reader-only text */
+.sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+
+/* shared section heading + dek */
+.section-title{font-family:BSD;font-weight:800;color:var(--white);font-size:clamp(32px,4.6vw,44px);line-height:var(--lh-head);margin:0;text-wrap:balance}
+.section-dek{text-wrap:pretty;margin:var(--head-gap) 0 0;font-size:18px;line-height:var(--lh-body)}
+
+/* dividers */
+.divider{border:0;border-top:1px solid var(--line);margin:0 0 var(--section)}
+
+/* top bar: wordmark left, issue label right */
+.top .meta{margin-left:auto;display:flex;align-items:center;gap:16px}
+.top .meta .pub{margin:0}
+.issue{margin:0;font-family:BST;font-weight:700;font-size:13px;line-height:1;letter-spacing:.08em;text-transform:uppercase;color:var(--smoke);border:1px solid var(--line);border-radius:999px;padding:7px 12px}
+
+/* ---------- 2. Homepage ---------- */
+
+/* hero: badge, headline, one line, one button, then the photo */
+.lede{padding-top:48px}
+.badge{display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;margin:0 0 20px;font-family:BST;font-weight:600;font-size:15px;line-height:1.3;color:var(--dim)}
+.badge b{font-weight:700;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--ball-hi);border:1px solid rgba(240,122,54,.5);border-radius:999px;padding:5px 11px;line-height:1}
+.lede h1{font-size:clamp(44px,7.2vw,76px);line-height:var(--lh-head);margin:0}
+.lede .context{text-wrap:pretty;margin:var(--head-gap) 0 0;font-family:BST;font-weight:700;font-size:clamp(19px,2.4vw,22px);line-height:1.4;color:var(--white)}
+.lede .context span{color:var(--smoke)}
+.lede .actions{margin:32px 0 0}
+.btn.primary{width:100%;min-height:52px;padding:14px 28px;font-size:19px}
+.cover-photo{margin:48px auto 0;padding:0}
+.cover-photo img{width:100%;height:auto;aspect-ratio:3/2;object-fit:cover}
+
+/* contents: eight scannable story cards */
+.contents{padding-top:var(--section)}
+.stories{list-style:none;margin:var(--head-gap) 0 0;padding:0;display:grid;grid-template-columns:1fr;gap:12px}
+.stories li{display:flex}
+.story{flex:1;display:grid;grid-template-columns:36px 1fr auto;grid-template-areas:"no title pg" "no dek dek";column-gap:14px;row-gap:4px;align-items:start;align-content:start;min-height:44px;padding:16px 16px 18px;background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);color:inherit;text-decoration:none;transition:border-color .15s}
+.story .no{grid-area:no;font-family:BSD;font-weight:900;font-size:28px;line-height:1;color:var(--dim);font-variant-numeric:tabular-nums}
+.story .title{grid-area:title;font-family:BST;font-weight:700;font-size:20px;line-height:1.2;color:var(--white)}
+.story .dek{grid-area:dek;font-size:16px;line-height:1.45;color:var(--smoke)}
+.story .pg{grid-area:pg;font-family:BST;font-weight:600;font-size:13px;line-height:1.2;letter-spacing:.02em;color:var(--dim);white-space:nowrap;padding-top:4px}
+.story:hover{border-color:var(--smoke)}
+.story:hover .title{color:var(--maple)}
+.story:focus-visible{outline:3px solid var(--ball-hi);outline-offset:3px}
+
+/* signup: the gated PDF form + page previews */
+.signup{padding-top:var(--section)}
+.signup .get{margin:0;max-width:none;padding:28px 24px 24px;border:1px solid var(--line);border-radius:var(--radius);scroll-margin-top:24px}
+.signup .get h2{font-size:clamp(32px,4.6vw,44px);line-height:var(--lh-head);margin:0 0 var(--head-gap)}
+.signup .get p{text-wrap:pretty;font-size:17px;line-height:1.55;margin:0 0 20px}
+.signup .field{margin:0 0 16px}
+.signup .field input,.signup .field select{min-height:48px}
+.signup .btn{min-height:52px;margin-top:8px}
+.signup .fine{margin:14px 0 0!important}
+.previews{display:grid;grid-template-columns:1fr 1fr;gap:20px 16px;margin:40px 0 0}
+.previews figure{margin:0}
+.previews img{width:100%;height:auto;aspect-ratio:620/802;object-fit:cover;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
+.previews figcaption{font-family:BST;font-weight:600;font-size:14px;line-height:1.3;color:var(--dim);margin-top:8px}
+
+/* mission: its own block, then a signed note */
+.mission{padding:var(--section) 0}
+.mission p{text-wrap:pretty;font-size:19px;line-height:1.7;margin:0 0 1em}
+.mission .lead{font-family:BSD;font-weight:800;color:var(--white);font-size:clamp(30px,4.2vw,40px);line-height:var(--lh-head);margin:0 0 var(--head-gap);text-wrap:balance}
+.mission .signoff{margin:40px 0 0;font-family:BST;font-weight:600;font-size:18px;line-height:1.4;color:var(--smoke)}
+.mission .signoff::before{content:"";display:block;width:56px;border-top:2px solid var(--smoke);margin-bottom:16px}
+.mission .signoff strong{font-weight:700;color:var(--white)}
+.mission .closing{margin:32px 0 0}
+.mission .closing a{display:inline-flex;align-items:center;gap:8px;min-height:44px;font-family:BST;font-weight:700;font-size:18px;text-decoration:none}
+.mission .closing a:hover{text-decoration:underline;text-underline-offset:4px}
+
+/* homepage-only adjustments to the shared "latest" strip */
+.home .latest{border-top:0;padding-bottom:0}
+.home .latest .section-title{margin-bottom:calc(var(--head-gap) - 48px)}
+
+/* ---------- 3. Card strip (homepage, The 24 archive, The Playbook) ---------- */
+.latest{border-top:1px solid var(--line);padding:var(--section) 0}
+.latest .wrap{display:grid;gap:48px}
+.latest .card{display:grid;grid-template-columns:1fr;gap:20px;text-decoration:none;color:inherit}
+.latest .card img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
+.latest .label{font-family:BST;font-weight:700;font-size:14px;color:var(--ball-hi);margin:0 0 8px}
+.latest .card h2{font-family:BSD;font-weight:800;color:var(--white);font-size:clamp(30px,4.2vw,40px);line-height:var(--lh-head);margin:0 0 12px}
+.latest .card p{margin:0 0 14px}
+.latest .more{display:inline-flex;align-items:center;min-height:44px;font-family:BST;font-weight:700;font-size:17px;color:var(--ball-hi)}
+.latest .card:hover h2{color:var(--maple)}
+
+/* ---------- 4. Long-form articles ---------- */
+.article{padding:48px 0 var(--section)}
+.article .wrap{max-width:calc(var(--measure) + 2 * var(--gutter))}
+.article .kicker{display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-family:BST;font-weight:700;font-size:15px;color:var(--white);margin:0 0 20px}
 .article .kicker b{background:var(--ball);color:var(--ink);padding:3px 10px;border-radius:3px}
-.article h1{font-size:clamp(44px,8vw,80px)}
-.article .dek{font-family:BST;font-weight:700;font-size:clamp(20px,2.6vw,24px);line-height:1.25;color:var(--ball-hi);margin:18px 0 0}
+.article h1{font-size:clamp(44px,8vw,80px);line-height:var(--lh-head)}
+.article .dek{font-family:BST;font-weight:700;font-size:clamp(20px,2.6vw,24px);line-height:1.3;color:var(--ball-hi);margin:var(--head-gap) 0 0}
 .article .byline{font-family:BST;font-weight:600;font-size:15px;color:var(--dim);margin:16px 0 0}
 .article .byline strong{color:var(--white);font-weight:700}
 
-.hero-photo{margin:32px auto 36px;max-width:1120px;padding:0 20px}
+.hero-photo{margin:40px auto;max-width:calc(var(--wide) + 2 * var(--gutter));padding:0 var(--gutter)}
 .hero-photo img,.body figure img{width:100%;height:auto;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
 .hero-photo figcaption,.body figcaption{font-family:BST;font-weight:600;font-size:14px;color:var(--dim);margin-top:8px}
 
-.body{font-size:18.5px;line-height:1.65}
+.body{font-size:18.5px;line-height:var(--lh-body)}
 .body p{margin:0 0 1.1em}
 .body strong{color:var(--white)}
 .body em{color:var(--maple)}
-.body h2{font-family:BSD;font-weight:800;color:var(--white);font-size:clamp(32px,4.6vw,44px);line-height:.98;margin:56px 0 18px;padding-top:22px;border-top:2px solid var(--smoke);text-wrap:balance}
-.body h3{font-family:BST;font-weight:700;color:var(--white);font-size:23px;line-height:1.2;margin:36px 0 12px}
+.body h2{font-family:BSD;font-weight:800;color:var(--white);font-size:clamp(32px,4.6vw,44px);line-height:var(--lh-head);margin:var(--section) 0 var(--head-gap);padding-top:24px;border-top:2px solid var(--smoke);text-wrap:balance}
+.body h3{font-family:BST;font-weight:700;color:var(--white);font-size:23px;line-height:var(--lh-head);margin:40px 0 12px}
 .body ul{margin:0 0 1.2em;padding-left:1.2em}
 .body li{margin:0 0 .55em}
 .body li::marker{color:var(--ball)}
 .body blockquote{margin:28px 0;padding:18px 22px;background:var(--panel);border-left:4px solid var(--ball);font-family:BST;font-weight:700;font-size:22px;line-height:1.3;color:var(--white)}
 .body blockquote p{margin:0}
-.body .pull{font-family:BSD;font-weight:800;font-size:clamp(28px,4vw,36px);line-height:1.02;color:var(--white);margin:6px 0 22px}
+.body .pull{font-family:BSD;font-weight:800;font-size:clamp(28px,4vw,36px);line-height:var(--lh-head);color:var(--white);margin:8px 0 24px}
 .body .note{background:var(--panel);padding:14px 18px;border-radius:4px;font-size:17px}
 .body .formula{margin:6px 0 20px;padding:18px 20px;background:var(--panel);border-top:3px solid var(--ball);font-family:BST;font-weight:700;font-size:clamp(17px,2.2vw,20px);line-height:1.4;color:var(--white);text-align:center}
 .body .formula span{color:var(--ball-hi)}
@@ -44,23 +153,32 @@
 .sources li{margin-bottom:.45em}
 .sources a{word-break:break-word}
 
-.cta-band{border-top:1px solid var(--line);padding:44px 0 56px}
-.cta-band .wrap{max-width:760px}
-.cta-band h2{font-family:BSD;font-weight:800;color:var(--white);font-size:clamp(30px,4.4vw,40px);line-height:1;margin:0 0 10px}
-.cta-band p{margin:0 0 18px;font-size:18px}
-.cta-band .btn{width:auto;padding:14px 24px}
+.cta-band{border-top:1px solid var(--line);padding:var(--section) 0}
+.cta-band .wrap{max-width:calc(var(--measure) + 2 * var(--gutter))}
+.cta-band h2{font-family:BSD;font-weight:800;color:var(--white);font-size:clamp(30px,4.4vw,40px);line-height:var(--lh-head);margin:0 0 12px}
+.cta-band p{margin:0 0 20px;font-size:18px}
+.cta-band .btn{width:auto;min-height:52px;padding:14px 24px}
 
-/* homepage "latest" strip */
-.latest{border-top:1px solid var(--line);padding:48px 0}
-.latest .wrap{display:grid;gap:56px}
-.latest .card{display:grid;grid-template-columns:1fr;gap:20px;text-decoration:none;color:inherit}
-.latest .card img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
-.latest .label{font-family:BST;font-weight:700;font-size:14px;color:var(--ball-hi);margin:0 0 6px}
-.latest h2{font-family:BSD;font-weight:800;color:var(--white);font-size:clamp(32px,4.6vw,44px);line-height:.98;margin:0 0 10px}
-.latest p{margin:0 0 12px}
-.latest .more{font-family:BST;font-weight:700;font-size:17px;color:var(--ball-hi)}
-.latest .card:hover h2{color:var(--maple)}
-
+/* ---------- 5. Breakpoints ---------- */
+@media (min-width:560px){
+  .btn.primary{width:auto}
+}
+@media (max-width:719px){
+  /* hero photo runs edge to edge on phones */
+  .cover-photo.wrap{padding:0}
+}
+@media (max-width:520px){
+  .top .meta .pub{display:none}
+}
+@media (min-width:720px){
+  .lede{padding-top:72px}
+  .cover-photo{margin-top:56px;padding:0 var(--gutter)}
+  .stories{grid-template-columns:1fr 1fr;gap:16px}
+  .story{grid-template-columns:1fr auto;grid-template-areas:"no pg" "title title" "dek dek";row-gap:8px;padding:20px 20px 22px}
+  .story .no{font-size:36px;margin-bottom:4px}
+  .signup .get{padding:36px 36px 32px}
+  .previews{grid-template-columns:repeat(4,1fr)}
+}
 @media (min-width:880px){
   .article{padding:64px 0 72px}
   .latest .card{grid-template-columns:1fr 1fr;gap:40px;align-items:center}

@@ -18,24 +18,53 @@
 <link rel="stylesheet" href="/style.css">
 <link rel="stylesheet" href="/article.css">
 </head>
-<body>
+<body class="home">
 
 <header class="top">
   <div class="wrap">
     <a class="brand" href="/"><img src="/img/logo.jpg" alt="" width="40" height="40"><span>HOOP THINK</span></a>
-    <p class="pub">A Westview Group publication</p>
+    <div class="meta">
+      <p class="pub">A Westview Group publication</p>
+      <p class="issue">Issue 01</p>
+    </div>
   </div>
 </header>
 
 <main>
-  <section class="hero">
-    <div class="wrap">
-      <div>
-        <p class="flag"><b>Preview issue</b> The HoopThink Briefing launches December 1</p>
-        <h1>A clearer view of grassroots basketball.</h1>
-        <p class="for">For parents. <span>Useful to everyone around the game.</span></p>
-        <p class="desc">A practical editorial guide for families navigating grassroots basketball—with useful context for the coaches, trainers, scouts, program directors, and operators who shape the experience.</p>
+  <!-- 1. HERO: one job, sell the issue -->
+  <section class="lede" aria-labelledby="lede-title">
+    <div class="wrap col">
+      <p class="badge"><b>Preview issue</b> <span>The HoopThink Briefing launches December 1</span></p>
+      <h1 id="lede-title">A clearer view of grassroots basketball.</h1>
+      <p class="context">For parents. <span>Useful to everyone around the game.</span></p>
+      <p class="actions"><a class="btn primary" href="#get">Read the preview issue</a></p>
+    </div>
+    <figure class="cover-photo wrap">
+      <img src="/img/home/hero-game.jpg" srcset="/img/home/hero-game-800.jpg 800w, /img/home/hero-game.jpg 1168w" sizes="(min-width: 1144px) 1080px, 100vw" alt="A grassroots girls basketball game in a packed indoor event hall: a player rises to shoot over a defender while the scoreboard reads 22 to 26 in the first period." width="1168" height="779" fetchpriority="high">
+    </figure>
+  </section>
 
+  <!-- 2. CONTENTS: one job, scan the eight stories -->
+  <section class="contents" aria-labelledby="contents-title">
+    <div class="wrap col">
+      <h2 class="section-title" id="contents-title">Inside the preview issue</h2>
+      <p class="section-dek">A practical editorial guide for families navigating grassroots basketball—with useful context for the coaches, trainers, scouts, program directors, and operators who shape the experience.</p>
+      <ol class="stories">
+        <li><a class="story" href="#get"><span class="no" aria-hidden="true">01</span><span class="title">The Starting Point</span><span class="dek">Everybody has a plan for your player. Who is explaining it?</span><span class="pg"><span aria-hidden="true">p. </span><span class="sr">page </span>2</span></a></li>
+        <li><a class="story" href="#get"><span class="no" aria-hidden="true">02</span><span class="title">The Big Read</span><span class="dek">A headline is not a recruiting plan</span><span class="pg"><span aria-hidden="true">p. </span><span class="sr">page </span>3</span></a></li>
+        <li><a class="story" href="#get"><span class="no" aria-hidden="true">03</span><span class="title">Before You Book</span><span class="dek">What are you buying this weekend?</span><span class="pg"><span aria-hidden="true">p. </span><span class="sr">page </span>4</span></a></li>
+        <li><a class="story" href="#get"><span class="no" aria-hidden="true">04</span><span class="title">The Recruiting Desk</span><span class="dek">Read past the commitment graphic</span><span class="pg"><span aria-hidden="true">p. </span><span class="sr">page </span>5</span></a></li>
+        <li><a class="story" href="#get"><span class="no" aria-hidden="true">05</span><span class="title">One Thing to Do</span><span class="dek">Put the recruiting conversation in one place</span><span class="pg"><span aria-hidden="true">p. </span><span class="sr">page </span>6</span></a></li>
+        <li><a class="story" href="#get"><span class="no" aria-hidden="true">06</span><span class="title">Watch the Game Differently</span><span class="dek">What happened before the catch?</span><span class="pg"><span aria-hidden="true">p. </span><span class="sr">page </span>7</span></a></li>
+        <li><a class="story" href="#get"><span class="no" aria-hidden="true">07</span><span class="title">Around the Gym</span><span class="dek">Three questions worth carrying</span><span class="pg"><span aria-hidden="true">p. </span><span class="sr">page </span>8</span></a></li>
+        <li><a class="story" href="#get"><span class="no" aria-hidden="true">08</span><span class="title">The Parent Question</span><span class="dek">“Everyone else seems to be committing. Are we behind?”</span><span class="pg"><span aria-hidden="true">p. </span><span class="sr">page </span>8</span></a></li>
+      </ol>
+    </div>
+  </section>
+
+  <!-- 3. SIGNUP: the one action (the PDF stays gated) -->
+  <section class="signup">
+    <div class="wrap col">
         <form action='/briefing/thanks/' class='get' id='get' method='POST' name='briefing-preview' data-netlify="true" netlify-honeypot="company">
           <input type="hidden" name="form-name" value="briefing-preview">
           <p class="hide"><label>Leave this empty <input name="company" tabindex="-1" autocomplete="off"></label></p>
@@ -58,26 +87,8 @@
           <button class="btn" type="submit">Get the PDF</button>
           <p class="fine">We use your email to send the HoopThink Briefing and nothing else.</p>
         </form>
-      </div>
-
-      <div class="cover"><img src="/img/cover.jpg" alt="Cover of the Hoop Think preview issue: a grassroots girls basketball game under a scoreboard, with the lead story 'A headline is not a recruiting plan'" width="1020" height="1320"></div>
-    </div>
-  </section>
-
-  <section class="inside">
-    <div class="wrap">
-      <h2>Inside the preview issue</h2>
-      <ol class="toc">
-        <li><b>The Starting Point</b><span>Everybody has a plan for your player. Who is explaining it?</span><em>2</em></li>
-        <li><b>The Big Read</b><span>A headline is not a recruiting plan</span><em>3</em></li>
-        <li><b>Before You Book</b><span>What are you buying this weekend?</span><em>4</em></li>
-        <li><b>The Recruiting Desk</b><span>Read past the commitment graphic</span><em>5</em></li>
-        <li><b>One Thing to Do</b><span>Put the recruiting conversation in one place</span><em>6</em></li>
-        <li><b>Watch the Game Differently</b><span>What happened before the catch?</span><em>7</em></li>
-        <li><b>Around the Gym</b><span>Three questions worth carrying</span><em>8</em></li>
-        <li><b>The Parent Question</b><span>“Everyone else seems to be committing. Are we behind?”</span><em>8</em></li>
-      </ol>
-      <div class="pages">
+      <div class="previews">
+        <figure><img src="/img/cover.jpg" alt="Cover of the Hoop Think preview issue: a grassroots girls basketball game under a scoreboard, with the lead story 'A headline is not a recruiting plan'" loading="lazy" width="1020" height="1320"><figcaption>The cover</figcaption></figure>
         <figure><img src="/img/page-3.jpg" alt="Page 3, The Big Read" loading="lazy" width="620" height="802"><figcaption>The Big Read</figcaption></figure>
         <figure><img src="/img/page-6.jpg" alt="Page 6, a printable recruiting notebook" loading="lazy" width="620" height="802"><figcaption>A recruiting notebook you can print</figcaption></figure>
         <figure><img src="/img/page-7.jpg" alt="Page 7, a five-catch tracker" loading="lazy" width="620" height="802"><figcaption>A five-catch tracker for game day</figcaption></figure>
@@ -85,23 +96,43 @@
     </div>
   </section>
 
-  <section class="latest">
+  <!-- 4. MORE: The 24 + articles. The 24 publisher rewrites the marked block; keep the markers and their indentation. -->
+  <section class="latest" aria-labelledby="more-title">
     <div class="wrap">
+      <h2 class="section-title" id="more-title">More from Hoop Think</h2>
       <!-- THE24:HOME:START -->
-      <a class="card" href="/the-24/2026-10-28/">
-        <img src="/the-24/2026-10-28/cards/the-24-002-banner.jpg" alt="The 24, Oct. 28, 2026: Tatum Gets 40, Then Gets the Last Word." width="1600" height="900" loading="lazy">
+      <a class="card" href="/the-24/2026-10-30/">
+        <img src="/the-24/2026-10-30/cards/the-24-004-banner.jpg" alt="The 24, Oct. 30, 2026: Atlanta Says Not Yet. The WNBA Gets Its First Finals Game 7." width="1600" height="900" loading="lazy">
         <div>
           <p class="label">The 24 · Today</p>
-          <h2>Tatum Gets 40, Then Gets the Last Word.</h2>
+          <h2>Atlanta Says Not Yet. The WNBA Gets Its First Finals Game 7.</h2>
           <p>Everything that happened in basketball in the last 24 hours, read the way a scout reads it.</p>
           <span class="more">Read The 24 →</span>
         </div>
       </a>
       <!-- THE24:HOME:END -->
+      <a class="card" href="/the-playbook/horns-slip/">
+        <img src="/img/playbook/horns-slip-banner.jpg" alt="The Playbook, Entry 01: Horns Slip, with a half-court diagram of the slip to the rim" width="1600" height="900" loading="lazy">
+        <div>
+          <p class="label">The Playbook · Latest</p>
+          <h2>Horns Slip</h2>
+          <p>Enter it. Get it back. Slip the big behind the defense. The first entry in The Playbook, our new home for set plays and actions.</p>
+          <span class="more">Read the breakdown →</span>
+        </div>
+      </a>
+      <a class="card" href="/does-your-school-pay-athletes/">
+        <img src="/img/nil/does-your-school-pay.jpg" alt="HoopThink graphic: Does your school actually pay athletes?" width="1600" height="900" loading="lazy">
+        <div>
+          <p class="label">Recruiting Reality</p>
+          <h2>Does Your School Actually Pay Athletes?</h2>
+          <p>Opting into revenue sharing is not the same as paying athletes. Five questions every family should ask before committing.</p>
+          <span class="more">Read the piece →</span>
+        </div>
+      </a>
       <a class="card" href="/how-to-watch-the-game/">
         <img src="/img/film-room/how-to-watch-banner.jpg" alt="HoopThink Film Room graphic: Zoom, Get, 77, Spain and Chicago, with the sequence for each" width="1600" height="900" loading="lazy">
         <div>
-          <p class="label">Film Room · Latest</p>
+          <p class="label">Film Room</p>
           <h2>How to Watch the Game</h2>
           <p>Five actions you’re going to see every single night. Stop tracking the ball. Start tracking the screens.</p>
           <span class="more">Read the piece →</span>
@@ -119,13 +150,15 @@
     </div>
   </section>
 
-  <section class="why">
-    <div class="wrap">
-      <p class="lead">You don’t need to know everything about grassroots basketball.</p>
+  <!-- 5. MISSION: one job, close with a signed note -->
+  <section class="mission" aria-labelledby="mission-lead">
+    <div class="wrap col">
+      <hr class="divider">
+      <p class="lead" id="mission-lead">You don’t need to know everything about grassroots basketball.</p>
       <p>You do deserve clear explanations from the people asking for your money, your time, and your trust.</p>
       <p>That’s where Hoop Think starts. Not with the assumption that every opportunity is a bad one—or that every family needs to become an expert in college athletics. We want to help you ask better questions, understand what you’re being told, and make decisions that fit the player in front of you.</p>
-      <p>— Keil Moore, The Westview Group</p>
-      <div class="cta"><a class="btn" href="#get">Get the preview issue</a></div>
+      <p class="signoff">— <strong>Keil Moore</strong>, The Westview Group</p>
+      <p class="closing"><a href="#get">Read the preview issue <span aria-hidden="true">→</span></a></p>
     </div>
   </section>
 </main>

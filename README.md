@@ -5,7 +5,8 @@ Static site for Hoop Think, a Westview Group publication. Netlify serves `site/`
 - `site/index.html`: homepage with the HoopThink Briefing preview issue, the email signup (Netlify Forms, form name `briefing-preview`), and the latest-pieces strip
 - `site/briefing/thanks/`: page shown after signup, with the PDF download
 - `site/briefing/hoop-think-preview-issue.pdf`: the preview issue
-- `site/minimum-viable-production/`, `site/how-to-watch-the-game/`: articles (shared styles in `site/article.css`)
+- `site/minimum-viable-production/`, `site/how-to-watch-the-game/`, `site/does-your-school-pay-athletes/`: articles (shared styles in `site/article.css`, which also holds the homepage layout)
+- `site/the-playbook/`: The Playbook section index and entries
 - `site/the-24/`: The 24 daily digest archive and editions
 - `tools/publish_edition.py`: turns a reviewed edition of The 24 into its public page and updates the homepage card and archive
 
