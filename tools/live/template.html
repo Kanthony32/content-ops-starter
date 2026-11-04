@@ -1,0 +1,244 @@
+<title>HoopThink Live, {{MON_D_YYYY}}</title>
+<!--
+  HOOPTHINK LIVE: review template (one artifact per day).
+  The drafting runs copy this file, fill the double-brace tokens, and put update sections between the
+  LIVE:ENTRIES markers, NEWEST FIRST. The publisher (tools/publish_live.py) keeps only the
+  <style id="live-css"> block and the approved <section class="update"> blocks between the
+  markers, so everything else (desk strip, review notes) never reaches the site.
+  Keep: the markers, <style id="live-css">, each update's id="u-<slot>" and data-slot
+  ("noon" or "5pm"), the h2 inside .stamp (it becomes the homepage headline), and the
+  data-time attribute (e.g. "12:00 PM ET").
+  WHAT THEY'RE SAYING (media / culture / commentary link block; any basketball: NBA, WNBA, NCAAM, NCAAW, HS, grassroots, international, G League). Hub rules: we curate, we don't add takes.
+    <div class="entry"><p class="kicker">In The News · What They're Saying</p><h3>...</h3>
+      <ul class="say"><li><span class="type opinion">Opinion</span><a class="hl" href="CANONICAL_URL">Headline as published</a>
+        <span class="src">Outlet · Author</span><p class="why">One line: why it's in here (business, culture, economics, politics, human experience).</p></li></ul></div>
+    Type label every time: opinion | report | podcast | data (class "counter" for the other side of a contested take).
+    Pair contested items: primary quote/source + at least one counter-take in the same block.
+    Link the canonical original (OutKick/Fox, not Yahoo/MSN/Flipboard syndication). Don't paraphrase the take as fact.
+-->
+<style id="live-css">
+@font-face{font-family:BSD;font-weight:800;font-display:swap;src:url(/fonts/big-shoulders-display-latin-800-normal.woff2) format("woff2")}
+@font-face{font-family:BSD;font-weight:900;font-display:swap;src:url(/fonts/big-shoulders-display-latin-900-normal.woff2) format("woff2")}
+@font-face{font-family:BST;font-weight:600;font-display:swap;src:url(/fonts/big-shoulders-text-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:BST;font-weight:700;font-display:swap;src:url(/fonts/big-shoulders-text-latin-700-normal.woff2) format("woff2")}
+@font-face{font-family:SS4;font-style:normal;font-weight:200 900;font-display:swap;src:url(/fonts/source-serif-4-latin-opsz-normal.woff2) format("woff2")}
+@font-face{font-family:SS4;font-style:italic;font-weight:200 900;font-display:swap;src:url(/fonts/source-serif-4-latin-opsz-italic.woff2) format("woff2")}
+:root{
+  --bg:#0A0A0A;--surface:#141414;--surface2:#1B1B1B;--line:#2A2A2A;
+  --wood:#E8A85C;--orange:#FF5A00;--orange2:#FF6B1A;--white:#FFFFFF;
+  --body:#C4BFB9;--muted:#948F8A;--live:#FF5A4A;--alert:#FF8A72;--ok:#6CC49A;
+  --f-display:BSD,"Big Shoulders Display",Impact,"Arial Narrow",sans-serif;
+  --f-label:BST,"Big Shoulders Text","Arial Narrow",sans-serif;
+  --f-serif:SS4,Georgia,"Times New Roman",serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{margin:0;background:var(--bg);color:var(--body);font-family:var(--f-serif);font-size:17.5px;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:clip}
+a{color:inherit}
+a:focus-visible{outline:3px solid var(--orange2);outline-offset:3px}
+img{display:block;max-width:100%}
+.sr{position:absolute;width:1px;height:1px;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);clip-path:inset(50%);white-space:nowrap;border:0}
+.skip{position:absolute;left:12px;top:-60px;z-index:100;background:var(--orange);color:#000;font-family:var(--f-label);font-weight:700;padding:10px 14px;text-decoration:none}
+.skip:focus{top:12px}
+.w{width:100%;max-width:1160px;margin:0 auto;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+
+/* site bar */
+.bar{position:sticky;top:0;z-index:50;background:rgba(10,10,10,.94);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.bar .w{display:flex;align-items:center;justify-content:space-between;gap:8px 20px;flex-wrap:wrap;min-height:64px;padding-top:8px;padding-bottom:8px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--white);min-width:0}
+.badge{width:42px;height:42px;border-radius:50%;background:#fff;border:1px solid rgba(255,255,255,.25);overflow:hidden;flex:none;display:grid;place-items:center}
+.badge img{width:100%;height:100%;object-fit:contain}
+.brand-t{font-family:var(--f-display);font-weight:900;font-size:25px;letter-spacing:.04em;line-height:1;text-transform:uppercase;white-space:nowrap}
+.brand-t em{font-style:normal;color:var(--orange2)}
+.nav{display:flex;align-items:center;gap:4px 18px;flex-wrap:wrap;font-family:var(--f-label);font-weight:700;font-size:14.5px;letter-spacing:.12em;text-transform:uppercase}
+.nav a{text-decoration:none;color:var(--white);padding:10px 0;min-height:44px;display:inline-flex;align-items:center}
+.nav a:hover{color:var(--orange2)}
+.nav a.cta{color:#000;background:var(--orange);padding:0 14px;border-radius:3px;min-height:38px}
+.nav a.cta:hover{background:var(--orange2);color:#000}
+
+/* hero */
+.hero{position:relative;isolation:isolate;overflow:hidden;min-height:clamp(540px,82vh,780px);display:flex;align-items:flex-end;border-bottom:1px solid var(--line)}
+.hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 46%;z-index:-3}
+.hero::before{content:"";position:absolute;inset:0;z-index:-2;background:linear-gradient(180deg,rgba(10,10,10,.55) 0%,rgba(10,10,10,.35) 28%,rgba(10,10,10,.82) 74%,#0A0A0A 100%)}
+.hero::after{content:"";position:absolute;inset:0;z-index:-1;background-image:linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);background-size:72px 100%}
+.hero-in{padding-top:96px;padding-bottom:44px}
+.meta{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;margin:0 0 18px;font-family:var(--f-label);font-weight:700;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--white)}
+.meta .sep{color:var(--wood)}
+.live-pill{display:inline-flex;align-items:center;gap:8px;background:#000;border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:7px 14px 6px;line-height:1}
+.live-pill i{width:10px;height:10px;border-radius:50%;background:var(--live);box-shadow:0 0 12px var(--live);margin-top:-1px}
+.pill{border:1px solid var(--orange);color:var(--orange2);border-radius:999px;padding:6px 12px 5px;line-height:1}
+@media (prefers-reduced-motion:no-preference){.live-pill i{animation:pulse 1.4s ease-in-out infinite}@keyframes pulse{50%{opacity:.4;transform:scale(.72)}}}
+.hero h1{font-family:var(--f-display);font-weight:900;color:var(--white);text-transform:uppercase;font-size:clamp(52px,11vw,128px);line-height:.9;letter-spacing:-.005em;margin:0;max-width:11ch;text-wrap:balance}
+.hero h1 em{font-style:normal;color:var(--orange2)}
+.lede{max-width:34em;margin:22px 0 0;font-size:clamp(18px,2.1vw,21px);line-height:1.5;color:#E6E1DB}
+.actions{display:flex;flex-wrap:wrap;gap:12px;margin:28px 0 0}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:50px;padding:0 24px;font-family:var(--f-label);font-weight:700;font-size:18px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border-radius:3px;background:var(--orange);color:#000;border:2px solid var(--orange)}
+.btn:hover{background:var(--orange2);border-color:var(--orange2)}
+.btn.ghost{background:transparent;color:var(--white);border-color:rgba(255,255,255,.55)}
+.btn.ghost:hover{border-color:var(--white);background:rgba(255,255,255,.08)}
+.cov{margin:26px 0 0;font-family:var(--f-label);font-weight:600;font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:var(--wood)}
+
+/* ticker: built from the day's own headlines */
+.ticker{background:#000;border-bottom:1px solid var(--line);overflow:hidden;white-space:nowrap}
+.ticker-track{display:inline-flex;min-width:200%;animation:tick 55s linear infinite}
+.ticker-track span{flex:none;padding:12px 0;font-family:var(--f-label);font-weight:700;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--white)}
+.ticker-track b{color:var(--orange2);font-weight:700;margin:0 10px 0 0}
+.ticker-track i{font-style:normal;color:var(--wood);margin:0 22px}
+@keyframes tick{to{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){
+  .ticker{white-space:normal}
+  .ticker-track{animation:none;min-width:0;display:block;padding:10px 18px}
+  .ticker-track span{display:inline;padding:0}
+  .ticker-track span+span{display:none}
+}
+
+/* zones */
+.zones{padding:64px 0 8px}
+.eyebrow{margin:0 0 6px;font-family:var(--f-label);font-weight:700;font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--orange2)}
+.sect-t{font-family:var(--f-display);font-weight:900;color:var(--white);text-transform:uppercase;font-size:clamp(38px,6vw,64px);line-height:.95;margin:0}
+.zone-grid{list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:1fr;gap:12px}
+.zone{display:grid;gap:6px;height:100%;padding:20px 20px 18px;background:var(--surface);border:1px solid var(--line);border-top:3px solid var(--orange);text-decoration:none;color:inherit}
+a.zone:hover{border-color:var(--wood);background:var(--surface2)}
+.zone .n{font-family:var(--f-label);font-weight:700;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.zone h3{font-family:var(--f-display);font-weight:900;color:var(--white);text-transform:uppercase;font-size:34px;line-height:1;margin:2px 0 0}
+.zone p{margin:0;font-size:16px;line-height:1.45;color:var(--body)}
+.zone .st{margin-top:6px;font-family:var(--f-label);font-weight:700;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--wood)}
+.zone.idle{border-top-color:var(--line)}
+.zone.idle .st{color:var(--muted)}
+
+/* feed */
+.feed-wrap{padding:56px 0 24px}
+.feed{display:grid;gap:56px;max-width:880px;margin:0 auto}
+.update{display:grid;gap:18px}
+.stamp{display:grid;gap:8px;padding-bottom:6px}
+.stamp .t{display:flex;align-items:center;gap:10px;font-family:var(--f-label);font-weight:700;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:var(--orange2)}
+.stamp .t::before{content:"";width:10px;height:10px;border-radius:50%;background:var(--live);box-shadow:0 0 10px var(--live)}
+.stamp h2{font-family:var(--f-display);font-weight:900;color:var(--white);text-transform:uppercase;font-size:clamp(36px,6vw,64px);line-height:.96;margin:0;text-wrap:balance}
+.stamp p{margin:4px 0 0;font-size:19px;color:var(--body)}
+.entry{display:grid;gap:12px;min-width:0;padding:22px 22px 24px;background:var(--surface);border:1px solid var(--line);border-left:4px solid var(--orange);scroll-margin-top:84px}
+.kicker{font-family:var(--f-label);font-weight:700;font-size:14.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--orange2);margin:0}
+.entry h3{font-family:var(--f-display);font-weight:800;color:var(--white);font-size:clamp(28px,4vw,38px);line-height:1.02;margin:0;text-wrap:balance}
+.entry p{margin:0}
+.entry b{color:var(--white)}
+.tags{font-family:var(--f-label);font-weight:600;font-size:14.5px;letter-spacing:.04em;color:var(--muted);word-break:break-word}
+.links{display:flex;flex-wrap:wrap;gap:8px}
+.links a{display:inline-flex;align-items:center;min-height:40px;font-family:var(--f-label);font-weight:700;font-size:15px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;border:1.5px solid rgba(255,255,255,.5);color:var(--white);padding:0 14px;border-radius:3px;line-height:1.2}
+.links a:hover{border-color:var(--orange2);color:var(--orange2)}
+.links a.watch{background:var(--orange);border-color:var(--orange);color:#000}
+.links a.watch:hover{background:var(--orange2);border-color:var(--orange2);color:#000}
+
+/* link roundups */
+.reads,.say{list-style:none;margin:0;padding:0;display:grid}
+.reads li{padding:12px 0;border-top:1px solid var(--line);font-size:16.5px;line-height:1.5}
+.reads li:last-child{border-bottom:1px solid var(--line)}
+.reads a,.say a.hl{color:var(--white);font-weight:600;text-decoration-color:var(--orange);text-underline-offset:3px}
+.reads .src,.say .src{font-family:var(--f-label);font-weight:600;font-size:13.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-left:6px}
+.say li{padding:14px 0;border-top:1px solid var(--line);display:grid;gap:5px;min-width:0}
+.say li:last-child{border-bottom:1px solid var(--line)}
+.say .src{margin-left:0}
+.say a.hl{font-size:19px;line-height:1.3}
+.say .type{font-family:var(--f-label);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px 1px;border:1px solid currentColor;border-radius:2px;justify-self:start;color:var(--muted)}
+.say .type.opinion{color:var(--alert)}.say .type.counter{color:var(--wood)}.say .type.report{color:var(--ok)}
+.say .why{font-size:16px;margin:0}
+.say .pair{font-family:var(--f-label);font-weight:700;font-size:13.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--wood);margin:8px 0 0}
+
+/* injury / status rows */
+.tr{display:grid}
+.tr-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:4px 12px;padding:11px 0;border-top:1px solid var(--line);font-size:16.5px;line-height:1.4}
+.tr-row:last-child{border-bottom:1px solid var(--line)}
+.tr-row b{color:var(--white);font-weight:600}
+.tr-row small{grid-column:1 / -1;color:var(--muted);font-size:15px}
+.chip{font-family:var(--f-label);font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;padding:2px 8px 1px;border:1px solid currentColor;border-radius:2px;white-space:nowrap;align-self:start}
+.chip.sx{color:var(--alert)}.chip.mri{color:var(--wood)}.chip.out{color:var(--muted)}.chip.go{color:var(--ok)}
+
+/* slate: numbered game rows */
+.slate{list-style:none;margin:0;padding:0;counter-reset:g;border-top:1px solid var(--line)}
+.slate li{counter-increment:g;display:grid;grid-template-columns:2.4em minmax(0,1fr) auto;align-items:baseline;gap:12px;padding:12px 0;border-bottom:1px solid var(--line);color:var(--white);font-family:var(--f-label);font-weight:700;font-size:20px;letter-spacing:.04em;text-transform:uppercase;line-height:1.2}
+.slate li::before{content:counter(g,decimal-leading-zero);font-size:14px;letter-spacing:.14em;color:var(--muted)}
+.slate li span:last-child{color:var(--wood);white-space:nowrap;font-variant-numeric:tabular-nums}
+.slate h4{font-family:var(--f-label);font-weight:700;font-size:15px;letter-spacing:.16em;text-transform:uppercase;color:var(--orange2);margin:16px 0 2px}
+
+/* Keil's take */
+.take{position:relative;display:grid;gap:10px;background:var(--surface);border:1px solid var(--line);border-top:4px solid var(--orange);padding:26px 26px 24px}
+.take{gap:6px}
+.take::before{content:"\201C";font-family:var(--f-display);font-weight:900;font-size:96px;line-height:.5;height:34px;color:var(--orange)}
+.take .kicker{color:var(--wood)}
+.take p:not(.kicker){font-style:italic;font-size:clamp(19px,2.4vw,22px);line-height:1.55;color:#EDE8E1}
+.take::after{content:"\2014  Keil Moore, Editor-in-Chief, HoopThink";font-family:var(--f-label);font-weight:700;font-size:14.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--wood);margin-top:6px}
+.call{background:var(--surface2);border-top:4px solid var(--wood);padding:24px;display:grid;gap:8px}
+.call .kicker{color:var(--wood)}
+.call p{margin:0;font-size:clamp(20px,2.4vw,24px);line-height:1.3;color:var(--white);font-weight:500;text-wrap:balance}
+.call small{font-family:var(--f-label);font-weight:600;font-size:14.5px;letter-spacing:.06em;color:var(--muted)}
+
+/* footer */
+.foot{margin-top:56px;border-top:3px solid var(--orange);background:#000}
+.foot .w{display:grid;gap:22px;padding-top:36px;padding-bottom:calc(40px + env(safe-area-inset-bottom,0px))}
+.foot-top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:16px 32px}
+.foot-k{margin:0;font-family:var(--f-label);font-weight:700;font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--wood)}
+.foot-line{margin:0;max-width:40em;font-size:17px;color:var(--body)}
+.foot-links{display:flex;flex-wrap:wrap;gap:4px 22px;font-family:var(--f-label);font-weight:700;font-size:15px;letter-spacing:.12em;text-transform:uppercase}
+.foot-links a{text-decoration:none;color:var(--white);display:inline-flex;align-items:center;min-height:44px}
+.foot-links a:hover{color:var(--orange2)}
+.foot-fine{margin:0;font-family:var(--f-label);font-weight:600;font-size:14px;letter-spacing:.06em;color:var(--muted)}
+.foot-fine a{color:var(--orange2)}
+
+@media (min-width:640px){
+  .zone-grid{grid-template-columns:1fr 1fr}
+  .entry{padding:26px 28px 28px}
+}
+@media (min-width:1000px){
+  .zone-grid{grid-template-columns:repeat(4,1fr)}
+}
+@media (max-width:520px){
+  .brand-t{font-size:22px}
+  .badge{width:38px;height:38px}
+  .nav{gap:0 14px;font-size:13.5px}
+  .slate li{font-size:18px;grid-template-columns:2em minmax(0,1fr) auto}
+  .hero-in{padding-top:72px}
+}
+
+/* review copy only */
+.desk{display:flex;flex-wrap:wrap;gap:6px 18px;font-family:var(--f-label);font-weight:600;font-size:14px;letter-spacing:.06em;line-height:1.5;color:var(--muted);border:1px dashed var(--line);padding:10px 14px;margin:18px 0}
+.desk b{color:var(--white);font-weight:700;letter-spacing:.1em}
+.hero.plain{min-height:0;background:linear-gradient(180deg,#1B1B1B,#0A0A0A)}
+.dateline{display:flex;flex-wrap:wrap;gap:6px 0;margin:22px 0 0;font-family:var(--f-label);font-weight:700;font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--white)}
+.dateline span{padding:0 14px}.dateline span:first-child{padding-left:0}.dateline span+span{border-left:1px solid var(--line)}
+.dateline a{color:var(--orange2);text-decoration:none}
+</style>
+
+<div class="w">
+  <div class="desk" role="note">
+    <b>DESK · NOT FOR PUBLICATION</b>
+    <span>{{DESK_NOTES}}</span>
+  </div>
+</div>
+
+<header class="bar">
+  <div class="w"><span class="brand"><span class="brand-t">Hoop Think <em>Live</em></span></span><span class="nav">{{DOW_MON_D}}</span></div>
+</header>
+
+<section class="hero plain">
+  <div class="w hero-in">
+    <h1><span class="sr">HoopThink Live: </span>The whole basketball <em>world,</em> all day.</h1>
+    <p class="lede">The whole basketball world, all day. Updated 24/5.</p>
+    <div class="dateline"><span>{{WEEKDAY_MONTH_D_YYYY}}</span><!-- LIVE:NEXT:START --><span>{{NEXT_UPDATE}}</span><!-- LIVE:NEXT:END --><span><a href="{{THE24_URL}}">This morning's The 24 →</a></span></div>
+  </div>
+</section>
+
+<section class="feed-wrap">
+  <div class="w">
+    <div class="feed">
+<!-- LIVE:ENTRIES:START -->
+{{UPDATES_NEWEST_FIRST}}
+<!-- LIVE:ENTRIES:END -->
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="w">
+    <p class="foot-fine">HoopThink Live · by The Westview Group · Editor-in-Chief: Keil Moore<br>Every morning: <a href="/the-24/">The 24</a> · Get the <a href="/#get">HoopThink Briefing</a></p>
+  </div>
+</footer>
