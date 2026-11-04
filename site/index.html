@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Hoop Think | A clearer view of grassroots basketball</title>
 <meta name="description" content="A practical editorial guide for families navigating grassroots basketball. Get the preview issue of the HoopThink Briefing.">
 <meta property="og:type" content="website">
@@ -11,37 +11,59 @@
 <meta property="og:description" content="For parents. Useful to everyone around the game. Get the preview issue of the HoopThink Briefing.">
 <meta property="og:image" content="https://hoopthink.net/img/og.jpg">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#15100E">
+<meta name="theme-color" content="#0A0A0A">
 <link rel="icon" type="image/png" href="/img/favicon.png">
 <link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
 <link rel="preload" href="/fonts/big-shoulders-display-latin-900-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/img/live/court-hero-1600.jpg" as="image" imagesrcset="/img/live/court-hero-800.jpg 800w, /img/live/court-hero-1600.jpg 1600w" imagesizes="100vw">
 <link rel="stylesheet" href="/style.css">
 <link rel="stylesheet" href="/article.css">
+<link rel="stylesheet" href="/home.css">
 </head>
 <body class="home">
 
-<header class="top">
-  <div class="wrap">
-    <a class="brand" href="/"><img src="/img/logo.jpg" alt="" width="40" height="40"><span>HOOP THINK</span></a>
-    <div class="meta">
-      <p class="pub">A Westview Group publication</p>
-      <p class="issue">Issue 01</p>
-    </div>
+<a class="skip" href="#main">Skip to content</a>
+
+<header class="hbar">
+  <div class="hw">
+    <a class="hbrand" href="/"><span class="hbadge"><img src="/img/live/logo-brain.png" alt="" width="42" height="42"></span><span class="hbrand-t">HOOP <em>THINK</em></span></a>
+    <nav class="hnav" aria-label="Primary">
+      <a href="/live/">Live</a>
+      <a href="/the-24/">The 24</a>
+      <a class="opt" href="/the-playbook/">The Playbook</a>
+      <a class="cta" href="#get">Get the Briefing</a>
+    </nav>
   </div>
 </header>
 
-<main>
+<main id="main">
   <!-- 1. HERO: one job, sell the issue -->
   <section class="lede" aria-labelledby="lede-title">
-    <div class="wrap col">
+    <img class="hero-img" src="/img/live/court-hero-1600.jpg" srcset="/img/live/court-hero-800.jpg 800w, /img/live/court-hero-1600.jpg 1600w" sizes="100vw" alt="" width="1600" height="1280" fetchpriority="high">
+    <div class="hw hero-in">
       <p class="badge"><b>Preview issue</b> <span>The HoopThink Briefing launches December 1</span></p>
-      <h1 id="lede-title">A clearer view of grassroots basketball.</h1>
+      <h1 id="lede-title">A clearer view of <em>grassroots basketball.</em></h1>
       <p class="context">For parents. <span>Useful to everyone around the game.</span></p>
-      <p class="actions"><a class="btn primary" href="#get">Read the preview issue</a></p>
+      <p class="actions"><a class="btn primary" href="#get">Read the preview issue</a><a class="btn ghost" href="/live/">Open HoopThink Live</a></p>
     </div>
-    <figure class="cover-photo wrap">
-      <img src="/img/home/hero-game.jpg" srcset="/img/home/hero-game-800.jpg 800w, /img/home/hero-game.jpg 1168w" sizes="(min-width: 1144px) 1080px, 100vw" alt="A grassroots girls basketball game in a packed indoor event hall: a player rises to shoot over a defender while the scoreboard reads 22 to 26 in the first period." width="1168" height="779" fetchpriority="high">
-    </figure>
+  </section>
+
+  <figure class="cover-photo wrap">
+    <img src="/img/home/hero-game.jpg" srcset="/img/home/hero-game-800.jpg 800w, /img/home/hero-game.jpg 1168w" sizes="(min-width: 1144px) 1080px, 100vw" alt="A grassroots girls basketball game in a packed indoor event hall: a player rises to shoot over a defender while the scoreboard reads 22 to 26 in the first period." width="1168" height="779" loading="lazy">
+  </figure>
+
+  <!-- 1b. WAYS IN: four doors, all existing pages -->
+  <section class="floor" aria-labelledby="floor-title">
+    <div class="hw">
+      <p class="eyebrow">Navigate</p>
+      <h2 class="sect-t" id="floor-title">Four ways in.</h2>
+      <ul class="zone-grid">
+        <li><a class="zone" href="/live/"><span class="n">01 / Right now</span><h3>HoopThink Live</h3><p>What is moving right now, from the NBA to high school to the international game.</p><span class="st">Follow Live →</span></a></li>
+        <li><a class="zone" href="/the-24/"><span class="n">02 / Every morning</span><h3>The 24</h3><p>Everything that happened in basketball in the last 24 hours, read the way a scout reads it.</p><span class="st">Read The 24 →</span></a></li>
+        <li><a class="zone" href="/the-playbook/"><span class="n">03 / The X’s and O’s</span><h3>The Playbook</h3><p>Our home for set plays and actions. Entry 01: Horns Slip.</p><span class="st">Open the Playbook →</span></a></li>
+        <li><a class="zone" href="#get"><span class="n">04 / For families</span><h3>The Briefing</h3><p>A practical editorial guide for families navigating grassroots basketball.</p><span class="st">Get the preview →</span></a></li>
+      </ul>
+    </div>
   </section>
 
   <!-- 2. CONTENTS: one job, scan the eight stories -->
@@ -64,7 +86,7 @@
 
   <!-- 3. SIGNUP: the one action (the PDF stays gated) -->
   <section class="signup">
-    <div class="wrap col">
+    <div class="wrap">
         <form action='/briefing/thanks/' class='get' id='get' method='POST' name='briefing-preview' data-netlify="true" netlify-honeypot="company">
           <input type="hidden" name="form-name" value="briefing-preview">
           <p class="hide"><label>Leave this empty <input name="company" tabindex="-1" autocomplete="off"></label></p>
@@ -203,7 +225,7 @@
 
 <footer class="foot">
   <div class="wrap">
-    <a class="brand" href="/"><img src="/img/logo.jpg" alt="" width="40" height="40"><span>HOOP THINK</span></a>
+    <a class="hbrand" href="/"><span class="hbadge"><img src="/img/live/logo-brain.png" alt="" width="42" height="42" loading="lazy"></span><span class="hbrand-t">HOOP <em>THINK</em></span></a>
     <p>© 2026 The Westview Group</p>
     <p class="motto">The game. The decisions. The people in between.</p>
   </div>

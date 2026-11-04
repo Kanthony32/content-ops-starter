@@ -1,0 +1,159 @@
+/* HoopThink homepage: court design. Homepage only.
+   Load after /style.css and /article.css. Every rule is scoped to body.home so
+   articles, The 24, Live and the archives are untouched. CSS only, no JavaScript. */
+
+body.home{
+  --ink:#0A0A0A;--panel:#141414;--surface2:#1B1B1B;--line:#2A2A2A;
+  --ball:#FF5A00;--ball-hi:#FF6B1A;--smoke:#C4BFB9;--dim:#948F8A;--maple:#E8A85C;--wood:#E8A85C;
+  --f-display:BSD,"Big Shoulders Display",Impact,"Arial Narrow",sans-serif;
+  --f-label:BST,"Big Shoulders Text","Arial Narrow",sans-serif;
+  --f-serif:SS4,Georgia,"Times New Roman",serif;
+  font-size:17.5px;line-height:1.62;overflow-x:clip;-webkit-font-smoothing:antialiased;
+  color-scheme:dark;
+}
+body.home [id]{scroll-margin-top:84px}
+body.home .wrap{max-width:1160px;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+body.home .wrap.col{max-width:1160px}
+body.home .hw{width:100%;max-width:1160px;margin:0 auto;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+
+.skip{position:absolute;left:12px;top:-60px;z-index:100;background:var(--ball);color:#000;font-family:var(--f-label);font-weight:700;padding:10px 14px;text-decoration:none}
+.skip:focus{top:12px}
+
+/* ---------- site bar ---------- */
+.hbar{position:sticky;top:0;z-index:50;background:rgba(10,10,10,.94);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding-top:env(safe-area-inset-top,0px)}
+.hbar .hw{display:flex;align-items:center;justify-content:space-between;gap:8px 20px;flex-wrap:wrap;min-height:64px;padding-top:8px;padding-bottom:8px}
+.hbrand{display:flex;align-items:center;gap:10px;text-decoration:none;color:#fff;min-width:0}
+.hbadge{width:42px;height:42px;border-radius:50%;background:#fff;border:1px solid rgba(255,255,255,.25);overflow:hidden;flex:none;display:grid;place-items:center}
+.hbadge img{width:100%;height:100%;object-fit:contain;mix-blend-mode:normal}
+.hbrand-t{font-family:var(--f-display);font-weight:900;font-size:25px;letter-spacing:.04em;line-height:1;text-transform:uppercase;white-space:nowrap}
+.hbrand-t em{font-style:normal;color:var(--ball-hi)}
+.hnav{display:flex;align-items:center;gap:4px 18px;flex-wrap:wrap;font-family:var(--f-label);font-weight:700;font-size:14.5px;letter-spacing:.12em;text-transform:uppercase}
+.hnav a{text-decoration:none;color:#fff;padding:10px 0;min-height:44px;display:inline-flex;align-items:center}
+.hnav a:hover{color:var(--ball-hi)}
+.hnav a.cta{color:#000;background:var(--ball);padding:0 14px;border-radius:3px;min-height:38px}
+.hnav a.cta:hover{background:var(--ball-hi);color:#000}
+@media (max-width:520px){.hnav .opt{display:none}.hbrand-t{font-size:22px}}
+
+/* ---------- hero ---------- */
+body.home .lede{position:relative;isolation:isolate;overflow:hidden;min-height:clamp(540px,78vh,740px);display:flex;align-items:flex-end;padding-top:0;border-bottom:1px solid var(--line)}
+.hero-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 46%;z-index:-3}
+body.home .lede::before{content:"";position:absolute;inset:0;z-index:-2;background:linear-gradient(90deg,rgba(10,10,10,.6) 0%,rgba(10,10,10,.2) 60%,rgba(10,10,10,0) 100%),linear-gradient(180deg,rgba(10,10,10,.55) 0%,rgba(10,10,10,.35) 28%,rgba(10,10,10,.84) 74%,#0A0A0A 100%)}
+body.home .lede::after{content:"";position:absolute;inset:0;z-index:-1;background-image:linear-gradient(90deg,rgba(255,255,255,.07) 1px,transparent 1px);background-size:72px 100%}
+.hero-in{padding-top:96px;padding-bottom:52px}
+body.home .badge{margin:0 0 18px;gap:8px 12px;font-family:var(--f-label);font-weight:700;font-size:15px;letter-spacing:.14em;text-transform:uppercase;color:#fff}
+body.home .badge b{color:var(--ball-hi);border-color:var(--ball);background:rgba(0,0,0,.55)}
+body.home .badge span{color:var(--wood)}
+body.home .lede h1{font-family:var(--f-display);font-weight:900;color:#fff;text-transform:uppercase;font-size:clamp(50px,10.5vw,120px);line-height:.92;letter-spacing:-.005em;margin:0;max-width:13ch;text-wrap:balance}
+body.home .lede h1 em{font-style:normal;color:var(--ball-hi)}
+body.home .lede .context{max-width:34em;margin:22px 0 0;font-family:var(--f-serif);font-weight:400;font-size:clamp(18px,2.1vw,22px);line-height:1.5;color:#E6E1DB}
+body.home .lede .context span{color:#E6E1DB}
+body.home .lede .actions{display:flex;flex-wrap:wrap;gap:12px;margin:28px 0 0}
+body.home .btn{width:auto;min-height:50px;padding:0 24px;font-family:var(--f-label);font-weight:700;font-size:18px;letter-spacing:.1em;text-transform:uppercase;border-radius:3px;background:var(--ball);color:#000;border:2px solid var(--ball)}
+body.home .btn:hover{background:var(--ball-hi);border-color:var(--ball-hi)}
+body.home .btn.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.55)}
+body.home .btn.ghost:hover{border-color:#fff;background:rgba(255,255,255,.08)}
+
+/* photo under the hero */
+body.home .cover-photo{margin:48px auto 0;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+body.home .cover-photo img{border:1px solid var(--line)}
+
+/* ---------- section heads ---------- */
+.eyebrow{margin:0 0 6px;font-family:var(--f-label);font-weight:700;font-size:14px;letter-spacing:.18em;text-transform:uppercase;color:var(--ball-hi)}
+body.home .section-title,.sect-t{font-family:var(--f-display);font-weight:900;color:#fff;text-transform:uppercase;font-size:clamp(38px,6vw,64px);line-height:.95;margin:0;text-wrap:balance}
+body.home .section-dek{max-width:42em;margin-top:16px;font-size:18px}
+
+/* ---------- four ways in ---------- */
+.floor{padding:72px 0 0}
+.zone-grid{list-style:none;margin:28px 0 0;padding:0;display:grid;grid-template-columns:1fr;gap:12px}
+.zone{display:grid;gap:6px;align-content:start;height:100%;padding:20px 20px 18px;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--ball);text-decoration:none;color:inherit}
+.zone:hover{border-color:var(--wood);background:var(--surface2)}
+.zone .n{font-family:var(--f-label);font-weight:700;font-size:13px;letter-spacing:.16em;text-transform:uppercase;color:var(--dim)}
+.zone h3{font-family:var(--f-display);font-weight:900;color:#fff;text-transform:uppercase;font-size:34px;line-height:1;margin:2px 0 0}
+.zone p{margin:0;font-size:16px;line-height:1.45;color:var(--smoke)}
+.zone .st{margin-top:6px;font-family:var(--f-label);font-weight:700;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--wood)}
+
+/* ---------- inside the preview issue ---------- */
+body.home .contents{padding-top:72px}
+body.home .stories{margin-top:28px;gap:12px}
+body.home .story{background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--ball);border-radius:0}
+body.home .story .no{color:var(--wood);font-family:var(--f-display)}
+body.home .story .title{font-family:var(--f-display);font-weight:800;text-transform:uppercase;font-size:24px;line-height:1.05}
+body.home .story .dek{color:var(--smoke)}
+body.home .story .pg{color:var(--dim);font-family:var(--f-label);letter-spacing:.1em;text-transform:uppercase}
+body.home .story:hover{border-color:var(--wood);background:var(--surface2)}
+body.home .story:hover .title{color:#fff}
+
+/* ---------- signup ---------- */
+body.home .signup{padding-top:72px}
+body.home .signup .wrap{display:grid;grid-template-columns:minmax(0,1fr);gap:40px}
+body.home .signup .get{background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--ball);border-radius:0;scroll-margin-top:84px}
+body.home .signup .get h2{font-family:var(--f-display);font-weight:900;text-transform:uppercase;color:#fff;font-size:clamp(36px,5vw,52px);line-height:.95}
+body.home .field span{font-family:var(--f-label);letter-spacing:.06em;text-transform:uppercase;font-size:14px;color:#fff}
+body.home .field input,body.home .field select{background:var(--ink);border:1px solid #3A3A3A;border-radius:3px;color:#fff}
+body.home .field input:focus-visible,body.home .field select:focus-visible{border-color:var(--ball-hi)}
+body.home .signup .btn{width:100%}
+body.home .previews{margin:0;gap:16px}
+body.home .previews img{border:1px solid var(--line);box-shadow:none}
+body.home .previews figcaption{font-family:var(--f-label);letter-spacing:.06em;text-transform:uppercase;font-size:13.5px}
+
+/* ---------- more from Hoop Think: card grid ---------- */
+body.home .latest{border-top:0;padding:72px 0 0}
+body.home .latest .wrap{display:grid;grid-template-columns:1fr;gap:20px}
+body.home .latest .section-title{grid-column:1/-1;margin:0 0 8px}
+body.home .latest .card{display:flex;flex-direction:column;gap:0;background:var(--panel);border:1px solid var(--line);border-top:3px solid var(--ball);text-decoration:none;color:inherit;min-width:0}
+body.home .latest .card:hover{border-color:var(--wood);background:var(--surface2)}
+body.home .latest .card img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;box-shadow:none;border-bottom:1px solid var(--line)}
+body.home .latest .card>div{display:flex;flex-direction:column;flex:1;padding:18px 20px 20px}
+body.home .latest .label{font-family:var(--f-label);font-weight:700;font-size:13.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--ball-hi);margin:0 0 8px}
+body.home .latest .card h2{font-family:var(--f-display);font-weight:800;color:#fff;text-transform:uppercase;font-size:clamp(26px,3vw,32px);line-height:1.02;margin:0 0 10px}
+body.home .latest .card:hover h2{color:#fff}
+body.home .latest .card p:not(.label){margin:0 0 14px;font-size:16.5px;line-height:1.5;color:var(--smoke)}
+body.home .latest .more{margin-top:auto;min-height:0;font-family:var(--f-label);font-weight:700;font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--wood)}
+body.home .latest .card:hover .more{color:var(--ball-hi)}
+
+/* ---------- mission ---------- */
+body.home .mission{padding:72px 0 80px}
+body.home .mission .wrap.col{max-width:820px}
+body.home .mission .divider{border-top:1px solid var(--line)}
+body.home .mission .lead{font-family:var(--f-display);font-weight:900;text-transform:uppercase;color:#fff;font-size:clamp(34px,5vw,54px);line-height:.98}
+body.home .mission p{font-size:19px;line-height:1.7}
+body.home .mission .signoff{font-family:var(--f-label);letter-spacing:.06em;text-transform:uppercase;font-size:17px}
+body.home .mission .signoff::before{border-top:2px solid var(--ball)}
+body.home .mission .closing a{font-family:var(--f-label);letter-spacing:.1em;text-transform:uppercase;color:var(--ball-hi)}
+
+/* ---------- footer ---------- */
+body.home .foot{border-top:3px solid var(--ball);padding:28px 0 40px;background:#000}
+body.home .foot .wrap{display:flex;flex-wrap:wrap;gap:10px 24px;align-items:center}
+body.home .foot p{margin:0;font-family:var(--f-label);font-weight:600;font-size:15px;letter-spacing:.06em;color:var(--dim)}
+body.home .foot .motto{margin-left:auto;color:var(--smoke)}
+
+/* ---------- breakpoints ---------- */
+@media (min-width:640px){
+  .zone-grid{grid-template-columns:1fr 1fr}
+  body.home .latest .wrap{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+@media (min-width:640px) and (max-width:979px){
+  /* two across: if the last card would sit alone, let it run the full row */
+  body.home .latest .card:last-child:nth-child(even){grid-column:1/-1;flex-direction:row}
+  body.home .latest .card:last-child:nth-child(even) img{flex:0 0 46%;width:46%;height:auto;aspect-ratio:auto;border-bottom:0;border-right:1px solid var(--line)}
+}
+@media (min-width:720px){
+  body.home .cover-photo{margin-top:56px}
+  body.home .stories{grid-template-columns:1fr 1fr}
+}
+@media (min-width:980px){
+  .zone-grid{grid-template-columns:repeat(4,1fr)}
+  body.home .stories{grid-template-columns:repeat(4,1fr)}
+  body.home .signup .wrap{grid-template-columns:minmax(0,480px) minmax(0,1fr);gap:56px;align-items:start}
+  body.home .previews{grid-template-columns:repeat(2,1fr)}
+  /* six-column grid: Live and The 24 get the wide cards, everything else sits three across */
+  body.home .latest .wrap{grid-template-columns:repeat(6,minmax(0,1fr))}
+  body.home .latest .card{grid-column:span 2}
+  body.home .latest .card[href^="/live/"],body.home .latest .card[href^="/the-24/"]{grid-column:span 3}
+  /* the last row: a lone card runs full width, two orphans split it */
+  body.home .latest .card:last-child:nth-child(3n+1){grid-column:span 6;flex-direction:row}
+  body.home .latest .card:last-child:nth-child(3n+1) img{flex:0 0 46%;width:46%;height:auto;aspect-ratio:auto;border-bottom:0;border-right:1px solid var(--line)}
+  body.home .latest .card:last-child:nth-child(3n+2),body.home .latest .card:nth-last-child(2):nth-child(3n+1){grid-column:span 3}
+  body.home .latest .card[href^="/live/"] h2,body.home .latest .card[href^="/the-24/"] h2{font-size:clamp(32px,3.4vw,42px)}
+}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
