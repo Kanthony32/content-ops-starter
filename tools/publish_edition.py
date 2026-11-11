@@ -157,4 +157,12 @@ else:
     t = t.replace("          <!-- THE24:LIST:START -->\n", "          <!-- THE24:LIST:START -->\n" + row, 1)
 if n1 != 1 or "THE24:LIST:START" not in t: sys.exit("archive markers not found")
 open(apath, "w", encoding="utf-8").write(t)
+# shared site chrome: header + menu + footer + light/dark toggle on every page (tools/chrome.py).
+# Never blocks the daily publish: if chrome.py is missing, warn loudly; the next run that has it backfills.
+try:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import chrome
+    print("chrome applied to", chrome.apply_all(site), "page(s)")
+except Exception as e:  # noqa
+    print("WARNING: shared chrome NOT applied:", e, file=sys.stderr)
 print("OK", out_dir)

@@ -1,0 +1,133 @@
+{
+ "sections": [
+  {
+   "slug": "film-room",
+   "name": "Film Room",
+   "path": "/film-room/",
+   "short": "Film, analytics and the decisions behind the game.",
+   "dek": "How the game works, read the way a scout reads it. Film breakdowns, analytics and the decisions behind what happens on the floor.",
+   "articles": [
+    "/ball-screen-reads/",
+    "/timeout-economy/",
+    "/wowy-playing-on-a-winning-team-vs-making-one-win/",
+    "/how-to-watch-the-game/",
+    "/minimum-viable-production/"
+   ]
+  },
+  {
+   "slug": "the-playbook",
+   "name": "The Playbook",
+   "path": "/the-playbook/",
+   "short": "Set plays and actions, taught like a coach teaches them.",
+   "index_exists": true,
+   "articles": [
+    "/the-playbook/horns-slip/"
+   ]
+  },
+  {
+   "slug": "sports-business",
+   "name": "Sports Business",
+   "path": "/sports-business/",
+   "short": "The money, structure and strategy behind sports.",
+   "dek": "The money, structure and strategy shaping college and grassroots sports: revenue sharing, NIL, and how programs are built to pay for it.",
+   "powered_by": "Westview Market Intelligence",
+   "articles": [
+    "/kentucky-champions-blue-llc/"
+   ]
+  },
+  {
+   "slug": "recruiting",
+   "name": "Recruiting",
+   "path": "/recruiting/",
+   "short": "Practical advice for players and families.",
+   "dek": "Practical recruiting advice for players and families: what to ask, what to verify, and how to compare offers before committing.",
+   "articles": [
+    "/does-your-school-pay-athletes/",
+    "/student-athlete-fit-system/"
+   ]
+  },
+  {
+   "slug": "the-24",
+   "name": "The 24",
+   "path": "/the-24/",
+   "short": "Our daily basketball digest, plus The 24 Live.",
+   "index_exists": true,
+   "articles": [],
+   "extra": [
+    {
+     "title": "The 24 daily archive",
+     "href": "/the-24/"
+    },
+    {
+     "title": "The 24 Live",
+     "href": "/live/"
+    }
+   ]
+  }
+ ],
+ "articles": {
+  "/kentucky-champions-blue-llc/": {
+   "title": "Kentucky Just Turned Its Athletic Department Into a Business",
+   "dek": "Champions Blue LLC is built to borrow, raise money and make deals. What it is, what it costs, and who is watching.",
+   "img": "/img/kentucky/champions-blue-banner.jpg",
+   "alt": "HoopThink graphic: Kentucky built a business. $141 million internal loan, $20.5 million revenue-share cap, 7 board seats.",
+   "label": "Sports Business"
+  },
+  "/timeout-economy/": {
+   "title": "The Timeout Economy",
+   "dek": "A 7-0 run to open the second half, and the only stop on the schedule is the 5-minute media timeout. Are coaches saving timeouts at the expense of winning?",
+   "img": "/img/timeout-economy/banner.jpg",
+   "alt": "A coach kneels in a huddle with four players during a timeout",
+   "label": "Think Piece"
+  },
+  "/wowy-playing-on-a-winning-team-vs-making-one-win/": {
+   "title": "WOWY: Playing on a Winning Team vs. Making One Win",
+   "dek": "Career winning percentage tells us what happened to a player’s team. WOWY helps us understand how much of it was connected to the player.",
+   "img": "/img/wowy/wowy-banner.jpg",
+   "alt": "HoopThink Analytics graphic: WOWY, With Or Without You. Playing on a winning team vs. making one win.",
+   "label": "Analytics"
+  },
+  "/student-athlete-fit-system/": {
+   "title": "The Student-Athlete Fit System",
+   "dek": "A free worksheet for any sport, any level. Score the schools you should be talking to, not just the ones you want to talk to.",
+   "img": "/img/recruiting/fit-system.jpg",
+   "alt": "HoopThink graphic: The Student-Athlete Fit System. 40 to 50 schools listed, 30 coaches emailed, a short list of 12 to 15, 5 finalists, 1 decision.",
+   "label": "Recruiting Resource"
+  },
+  "/ball-screen-reads/": {
+   "title": "The Ball Screen Has Two Defenders",
+   "dek": "Every ball screen is a 2-on-2 problem. Most guards solve it like it’s 1-on-1. The reads, an eight-rung ladder, and one wrinkle.",
+   "img": "/img/ball-screen/two-defenders-banner.jpg",
+   "alt": "HoopThink graphic: Two defenders. Read both. Drop, hedge, switch and blitz, with the handler's read for each",
+   "label": "The Game"
+  },
+  "/the-playbook/horns-slip/": {
+   "title": "Horns Slip",
+   "dek": "Enter it. Get it back. Slip the big behind the defense. The first entry in The Playbook, our new home for set plays and actions.",
+   "img": "/img/playbook/horns-slip-banner.jpg",
+   "alt": "The Playbook, Entry 01: Horns Slip, with a half-court diagram of the slip to the rim",
+   "label": "The Playbook"
+  },
+  "/does-your-school-pay-athletes/": {
+   "title": "Does Your School Actually Pay Athletes?",
+   "dek": "Opting into revenue sharing is not the same as paying athletes. Five questions every family should ask before committing.",
+   "img": "/img/nil/does-your-school-pay.jpg",
+   "alt": "HoopThink graphic: Does your school actually pay athletes?",
+   "label": "Recruiting Reality"
+  },
+  "/how-to-watch-the-game/": {
+   "title": "How to Watch the Game",
+   "dek": "Five actions you’re going to see every single night. Stop tracking the ball. Start tracking the screens.",
+   "img": "/img/film-room/how-to-watch-banner.jpg",
+   "alt": "HoopThink Film Room graphic: Zoom, Get, 77, Spain and Chicago, with the sequence for each",
+   "label": "Film Room"
+  },
+  "/minimum-viable-production/": {
+   "title": "Minimum Viable Production",
+   "dek": "Where is your production actually coming from? Stop counting scorers. Start counting pathways.",
+   "img": "/img/mvp/hands-ball.jpg",
+   "alt": "Black-and-white photo of several players' hands reaching for a basketball",
+   "label": "The Game"
+  }
+ }
+}

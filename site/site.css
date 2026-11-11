@@ -1,0 +1,125 @@
+/* HoopThink shared chrome + light/dark theme. Loaded last on every page.
+   Dark is the default token set. Light overrides are scoped by page kind because the
+   homepage, article pages and Live pages name their color tokens differently, and The 24
+   editions (kind "edition") already ship their own light and dark palettes. */
+
+@font-face{font-family:BSD;font-weight:800;font-display:swap;src:url(/fonts/big-shoulders-display-latin-800-normal.woff2) format("woff2")}
+@font-face{font-family:BSD;font-weight:900;font-display:swap;src:url(/fonts/big-shoulders-display-latin-900-normal.woff2) format("woff2")}
+@font-face{font-family:BST;font-weight:600;font-display:swap;src:url(/fonts/big-shoulders-text-latin-600-normal.woff2) format("woff2")}
+@font-face{font-family:BST;font-weight:700;font-display:swap;src:url(/fonts/big-shoulders-text-latin-700-normal.woff2) format("woff2")}
+
+/* ---------- light theme: article, section and utility pages ---------- */
+html[data-theme="light"][data-kind="main"]{
+  color-scheme:light;
+  --ink:#FAF7F2;--panel:#F1EBE2;--line:#DCD2C5;--ball:#C24E0C;--ball-hi:#B8480A;
+  --smoke:#3B322C;--dim:#6A6159;--white:#17110E;--maple:#7A4A14;
+}
+html[data-theme="light"][data-kind="main"] .hero-photo img,
+html[data-theme="light"][data-kind="main"] .body figure img{box-shadow:0 0 0 1px rgba(0,0,0,.12)}
+html[data-theme="light"][data-kind="main"] .latest .card img{box-shadow:0 0 0 1px rgba(0,0,0,.12)}
+
+/* ---------- light theme: homepage ---------- */
+html[data-theme="light"][data-kind="home"] body.home{
+  color-scheme:light;
+  --ink:#FAF7F2;--panel:#FFFFFF;--surface2:#F3EDE4;--line:#DDD3C6;--ball:#C24E0C;--ball-hi:#B8480A;
+  --smoke:#40372F;--dim:#6A6159;--maple:#7A4A14;--wood:#8A5518;--hw:#17110E;
+}
+/* the photo hero stays dark in both themes: restore its dark-theme tokens */
+html[data-theme="light"][data-kind="home"] body.home .lede{--hw:#fff;--wood:#E8A85C;--maple:#E8A85C;--ball:#FF5A00;--ball-hi:#FF6B1A;--smoke:#C4BFB9;--dim:#948F8A;--line:#2A2A2A}
+html[data-theme="light"][data-kind="home"] body.home .previews img,
+html[data-theme="light"][data-kind="home"] body.home .cover-photo img{border-color:var(--line)}
+html[data-theme="light"][data-kind="home"] body.home .field input,
+html[data-theme="light"][data-kind="home"] body.home .field select{border-color:#C9BEB0}
+
+/* ---------- light theme: Live pages ---------- */
+html[data-theme="light"][data-kind="live"]{
+  color-scheme:light;
+  --bg:#FAF7F2;--surface:#FFFFFF;--surface2:#F3EDE4;--line:#DDD3C6;
+  --wood:#8A5518;--orange:#C24E0C;--orange2:#B8480A;--white:#17110E;
+  --body:#3B322C;--muted:#6A6159;--live:#C62F20;--alert:#B23A22;--ok:#1E7A52;
+}
+
+/* Live pages: the photo hero (and the plain hero variant) stay dark in both themes */
+html[data-theme="light"][data-kind="live"] .hero{--bg:#0A0A0A;--surface:#141414;--surface2:#1B1B1B;--line:#2A2A2A;--wood:#E8A85C;--orange:#FF5A00;--orange2:#FF6B1A;--white:#FFFFFF;--body:#C4BFB9;--muted:#948F8A;--live:#FF5A4A;--alert:#FF8A72;--ok:#6CC49A}
+
+/* ---------- shared header ---------- */
+.ht-bar,.ht-foot{
+  --ht-bg:#0E0B0A;--ht-fg:#FFFFFF;--ht-mut:#B7AEA6;--ht-line:#2E2622;--ht-acc:#FF6B1A;--ht-on:#000;--ht-chip:#1C1613;
+  font-family:BST,"Big Shoulders Text","Arial Narrow",sans-serif;
+}
+html[data-theme="light"] .ht-bar,html[data-theme="light"] .ht-foot{
+  --ht-bg:#FAF7F2;--ht-fg:#17110E;--ht-mut:#5E554D;--ht-line:#DDD3C6;--ht-acc:#B8480A;--ht-on:#FFFFFF;--ht-chip:#F0E9DF;
+}
+.ht-bar,.ht-bar *,.ht-foot,.ht-foot *{box-sizing:border-box}
+.ht-bar{position:sticky;top:0;z-index:60;background:var(--ht-bg);color:var(--ht-fg);border-bottom:1px solid var(--ht-line);padding-top:env(safe-area-inset-top,0px)}
+.ht-in{width:100%;max-width:1160px;margin:0 auto;padding-left:max(18px,env(safe-area-inset-left,0px));padding-right:max(18px,env(safe-area-inset-right,0px))}
+.ht-bar>.ht-in{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:64px}
+.ht-brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ht-fg);min-width:0}
+.ht-badge{width:42px;height:42px;border-radius:50%;background:#fff;border:1px solid rgba(128,128,128,.4);overflow:hidden;flex:none;display:grid;place-items:center}
+.ht-badge img{width:100%;height:100%;object-fit:contain;display:block;mix-blend-mode:normal}
+.ht-brand-t{font-family:BSD,"Big Shoulders Display",Impact,"Arial Narrow",sans-serif;font-weight:900;font-size:25px;letter-spacing:.04em;line-height:1;text-transform:uppercase;white-space:nowrap}
+.ht-brand-t em{font-style:normal;color:var(--ht-acc)}
+.ht-actions{display:flex;align-items:center;gap:6px}
+.ht-cta{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;margin-right:4px;background:var(--ht-acc);color:var(--ht-on);border-radius:3px;font-weight:700;font-size:14.5px;letter-spacing:.1em;text-transform:uppercase;text-decoration:none;white-space:nowrap}
+.ht-cta:hover{filter:brightness(1.08)}
+.ht-theme,.ht-nav summary{min-height:44px;color:var(--ht-fg);background:transparent;border:1px solid var(--ht-line);border-radius:3px;cursor:pointer;font:inherit}
+.ht-theme{width:44px;display:grid;place-items:center;padding:0}
+.ht-theme:hover,.ht-nav summary:hover{border-color:var(--ht-mut)}
+.ht-theme .ic-sun{display:none}
+html[data-theme="dark"] .ht-theme .ic-sun{display:block}
+html[data-theme="dark"] .ht-theme .ic-moon{display:none}
+html[data-theme="light"] .ht-theme .ic-sun{display:none}
+.ht-bar a:focus-visible,.ht-bar button:focus-visible,.ht-bar summary:focus-visible,.ht-foot a:focus-visible{outline:3px solid var(--ht-acc);outline-offset:3px}
+.ht-nav{position:static}
+.ht-nav summary{list-style:none;display:flex;align-items:center;gap:10px;padding:0 12px;font-weight:700;font-size:14.5px;letter-spacing:.12em;text-transform:uppercase;user-select:none}
+.ht-nav summary::-webkit-details-marker{display:none}
+.ht-burger{display:grid;gap:4px;width:20px}
+.ht-burger i{display:block;height:2px;background:currentColor;transition:transform .18s,opacity .18s}
+.ht-nav[open] .ht-burger i:nth-child(1){transform:translateY(6px) rotate(45deg)}
+.ht-nav[open] .ht-burger i:nth-child(2){opacity:0}
+.ht-nav[open] .ht-burger i:nth-child(3){transform:translateY(-6px) rotate(-45deg)}
+.ht-close-t,.ht-nav[open] .ht-open-t{display:none}
+.ht-nav[open] .ht-close-t{display:inline}
+@media (max-width:560px){.ht-sum-t{display:none!important}.ht-nav summary{padding:0 12px}.ht-cta{display:none}.ht-brand-t{font-size:22px}}
+@media (prefers-reduced-motion:reduce){.ht-burger i{transition:none}}
+
+/* menu panel: every section with its pages */
+.ht-panel{position:absolute;left:0;right:0;top:100%;background:var(--ht-bg);color:var(--ht-fg);border-bottom:1px solid var(--ht-line);box-shadow:0 22px 44px rgba(0,0,0,.35);max-height:calc(100vh - 64px);max-height:calc(100dvh - 64px);overflow-y:auto;padding:22px 0 26px}
+.ht-grid{display:grid;grid-template-columns:1fr;gap:22px}
+@media (min-width:720px){.ht-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:26px 32px}}
+@media (min-width:1060px){.ht-grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
+.ht-sec{border-top:3px solid var(--ht-acc);padding-top:10px;min-width:0}
+.ht-sec-t{display:block;font-family:BSD,"Big Shoulders Display",Impact,"Arial Narrow",sans-serif;font-weight:800;font-size:30px;line-height:1;text-transform:uppercase;color:var(--ht-fg);text-decoration:none;padding:6px 0}
+.ht-sec-t:hover{color:var(--ht-acc)}
+.ht-sec-d{margin:4px 0 10px;font-size:15.5px;line-height:1.35;color:var(--ht-mut);font-weight:600}
+.ht-pow{display:flex;align-items:center;gap:8px;margin:0 0 10px;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--ht-mut);font-weight:700;line-height:1.2}
+.ht-pow img{flex:none;border-radius:3px}
+.ht-sec ul{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.ht-sec li a{display:block;min-height:44px;padding:8px 0;font-family:SS4,Georgia,serif;font-size:16px;line-height:1.3;color:var(--ht-fg);text-decoration:none;border-top:1px solid var(--ht-line)}
+.ht-sec li a:hover{color:var(--ht-acc);text-decoration:underline;text-underline-offset:3px}
+.ht-panel-foot{display:flex;flex-wrap:wrap;gap:6px 24px;margin:22px 0 0;padding-top:16px;border-top:1px solid var(--ht-line)}
+.ht-panel-foot a{display:inline-flex;align-items:center;min-height:44px;font-weight:700;font-size:15px;letter-spacing:.12em;text-transform:uppercase;color:var(--ht-acc);text-decoration:none}
+.ht-panel-foot a:hover{text-decoration:underline;text-underline-offset:4px}
+
+/* ---------- shared footer ---------- */
+.ht-foot{background:var(--ht-bg);color:var(--ht-mut);border-top:3px solid var(--ht-acc);padding:28px 0 40px;margin-top:0}
+.ht-foot a{color:var(--ht-fg)}
+.ht-foot-top{display:flex;flex-wrap:wrap;gap:18px 32px;align-items:center;justify-content:space-between}
+.ht-foot-links{display:flex;flex-wrap:wrap;gap:0 22px}
+.ht-foot-links a{display:inline-flex;align-items:center;min-height:44px;font-weight:700;font-size:15px;letter-spacing:.1em;text-transform:uppercase;color:var(--ht-fg);text-decoration:none}
+.ht-foot-links a:hover{color:var(--ht-acc)}
+.ht-foot-pow{display:flex;align-items:center;gap:10px;margin:14px 0 0;padding-top:16px;border-top:1px solid var(--ht-line);font-weight:600;font-size:16px;color:var(--ht-mut)}
+.ht-foot-pow img{flex:none;border-radius:3px}
+.ht-foot-bot{display:flex;flex-wrap:wrap;gap:16px 28px;align-items:center;margin-top:18px}
+.ht-wtg{width:216px;height:auto;border-radius:6px;display:block}
+.ht-foot-bot p{margin:0;font-weight:600;font-size:15px;letter-spacing:.04em}
+.ht-foot-bot .ht-motto{color:var(--ht-fg);margin-top:2px}
+
+/* ---------- section index pages ---------- */
+.sec-intro{padding:44px 0 36px}
+.sec-intro .wrap{max-width:820px}
+.sec-intro .desc{font-size:19px;margin:var(--head-gap,24px) 0 0;text-wrap:pretty}
+.sec-pow{display:block;margin:28px 0 0;text-decoration:none;color:var(--dim)}
+.sec-pow img{width:100%;height:auto;border-radius:6px;border:1px solid var(--line)}
+.sec-pow span{display:block;margin-top:10px;font-family:BST;font-weight:700;font-size:15px;letter-spacing:.08em;text-transform:uppercase}
+@media (min-width:880px){.sec-intro{padding:64px 0 40px}}

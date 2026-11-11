@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Publish approved HoopThink Live updates for one day and update the site source.
+"""Publish approved The 24 Live updates for one day and update the site source.
 
 Usage:
   python3 -I publish_live.py --root DEPLOY_DIR --review REVIEW.html --date 2026-11-04 \
@@ -130,8 +130,8 @@ cta2 = ('What is Live?', '#launch') if "launch" in used_ids else ("Read this mor
 hero_alt = "A hardwood basketball court seen from above, with the Hoop Think brain-and-basketball logo painted at center court and the Hoop Think wordmark in the key."
 
 url = f"https://hoopthink.net/live/{slug}/"
-desc = f"{headline.rstrip('.!?: ')}. HoopThink Live: the whole basketball world, all day, from The Westview Group."
-ld = {"@context": "https://schema.org", "@type": "LiveBlogPosting", "headline": f"HoopThink Live, {label_date}",
+desc = f"{headline.rstrip('.!?: ')}. The 24 Live: the whole basketball world, all day, from The Westview Group."
+ld = {"@context": "https://schema.org", "@type": "LiveBlogPosting", "headline": f"The 24 Live, {label_date}",
       "url": url, "datePublished": slug + TIMES[keep[-1]], "dateModified": slug + TIMES[newest],
       "coverageStartTime": slug + "T07:00:00-05:00", "coverageEndTime": slug + "T19:00:00-05:00",
       "author": {"@type": "Organization", "name": "The Westview Group"},
@@ -142,12 +142,12 @@ page = f"""<!doctype html>
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>HoopThink Live, {H(label_date)} | Hoop Think</title>
+<title>The 24 Live, {H(label_date)} | Hoop Think</title>
 <meta name="description" content="{H(desc)}">
 <link rel="canonical" href="{url}">
 <meta property="og:type" content="article">
 <meta property="og:url" content="{url}">
-<meta property="og:title" content="HoopThink Live: {H(headline)}">
+<meta property="og:title" content="The 24 Live: {H(headline)}">
 <meta property="og:description" content="{H(desc)}">
 <meta property="og:image" content="https://hoopthink.net/live/{slug}/live-banner.jpg">
 <meta name="twitter:card" content="summary_large_image">
@@ -164,7 +164,7 @@ page = f"""<!doctype html>
 
 <header class="bar">
   <div class="w">
-    <a class="brand" href="/" aria-label="Hoop Think home"><span class="badge"><img src="/img/live/logo-brain.png" alt="" width="42" height="42"></span><span class="brand-t">Hoop Think <em>Live</em></span></a>
+    <a class="brand" href="/" aria-label="Hoop Think home"><span class="badge"><img src="/img/live/logo-brain.png" alt="" width="42" height="42"></span><span class="brand-t">The 24 <em>Live</em></span></a>
     <nav class="nav" aria-label="Site"><a href="{the24}">The 24</a><a href="/live/">All Live days</a><a class="cta" href="/#get">Get the Briefing</a></nav>
   </div>
 </header>
@@ -174,8 +174,8 @@ page = f"""<!doctype html>
     <img class="hero-img" src="/img/live/court-hero-1600.jpg" srcset="/img/live/court-hero-800.jpg 800w, /img/live/court-hero-1600.jpg 1600w" sizes="100vw" alt="{hero_alt}" width="1600" height="1280" fetchpriority="high">
     <div class="w hero-in">
       <p class="meta"><span class="live-pill"><i aria-hidden="true"></i>Live</span><span>{H(label_date)}</span><span class="sep" aria-hidden="true">\u2022</span><span>{H(updated)}</span><span class="pill">Updated 24/5</span></p>
-      <h1 id="live-title"><span class="sr">HoopThink Live: </span>The whole basketball <em>world,</em> all day.</h1>
-      <p class="lede">HoopThink Live is the all-day companion to The 24. The 24 is the finished read on last night. Live is what is moving right now.</p>
+      <h1 id="live-title"><span class="sr">The 24 Live: </span>The whole basketball <em>world,</em> all day.</h1>
+      <p class="lede">The 24 Live is the all-day companion to The 24. The 24 is the finished read on last night. Live is what is moving right now.</p>
       <p class="actions"><a class="btn" href="{cta1[1]}">{cta1[0]}</a><a class="btn ghost" href="{cta2[1]}">{cta2[0]}</a></p>
       <p class="cov">NBA \u00b7 NCAAM \u00b7 NCAAW \u00b7 WNBA \u00b7 High School \u00b7 International</p>
     </div>
@@ -213,7 +213,7 @@ page = f"""<!doctype html>
     </div>
     <p class="foot-k">Center court \u00b7 HoopThink</p>
     <p class="foot-line">Basketball intelligence. Business, culture, economics, politics, and human experience.</p>
-    <p class="foot-fine">Published {H(label_date)} \u00b7 HoopThink Live \u00b7 by The Westview Group \u00b7 Editor-in-Chief: Keil Moore<br>Every morning: <a href="/the-24/">The 24</a> \u00b7 Get the <a href="/#get">HoopThink Briefing</a></p>
+    <p class="foot-fine">Published {H(label_date)} \u00b7 The 24 Live \u00b7 by The Westview Group \u00b7 Editor-in-Chief: Keil Moore<br>Every morning: <a href="/the-24/">The 24</a> \u00b7 Get the <a href="/#get">HoopThink Briefing</a></p>
   </div>
 </footer>
 </body>
@@ -225,9 +225,9 @@ open(os.path.join(out_dir, "index.html"), "w", encoding="utf-8").write(page)
 img = f"/live/{slug}/live-banner.jpg"
 card = f"""      <!-- LIVE:HOME:START -->
       <a class="card" href="/live/{slug}/">
-        <img src="{img}" alt="HoopThink Live, {H(label_date)}: {H(headline)}" width="1600" height="900" loading="lazy">
+        <img src="{img}" alt="The 24 Live, {H(label_date)}: {H(headline)}" width="1600" height="900" loading="lazy">
         <div>
-          <p class="label">HoopThink Live · {mon_dot} {d.day} · Updated {H(updated)}</p>
+          <p class="label">The 24 Live · {mon_dot} {d.day} · Updated {H(updated)}</p>
           <h2>{H(headline)}</h2>
           <p>The whole basketball world, all day. Updated 24/5.</p>
           <span class="more">Follow Live →</span>
@@ -254,8 +254,8 @@ if not os.path.exists(apath):
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>HoopThink Live | Hoop Think</title>
-<meta name="description" content="HoopThink Live: the whole basketball world, all day. Updated 24/5 from The Westview Group.">
+<title>The 24 Live | Hoop Think</title>
+<meta name="description" content="The 24 Live: the whole basketball world, all day. Updated 24/5 from The Westview Group.">
 <link rel="canonical" href="https://hoopthink.net/live/">
 <meta name="theme-color" content="#15100E">
 <link rel="icon" type="image/png" href="/img/favicon.png">
@@ -303,9 +303,9 @@ if not os.path.exists(apath):
 t = open(apath, encoding="utf-8").read()
 latest = f"""      <!-- LIVE:LATEST:START -->
       <a class="card" href="/live/{slug}/">
-        <img src="{img}" alt="HoopThink Live, {H(label_date)}: {H(headline)}" width="1600" height="900">
+        <img src="{img}" alt="The 24 Live, {H(label_date)}: {H(headline)}" width="1600" height="900">
         <div>
-          <p class="label">HoopThink Live · {label_date} · Updated {H(updated)}</p>
+          <p class="label">The 24 Live · {label_date} · Updated {H(updated)}</p>
           <h2>{H(headline)}</h2>
           <p>The whole basketball world, all day. Updated 24/5. Every morning starts with The 24.</p>
           <span class="more">Follow Live →</span>
@@ -320,4 +320,12 @@ else:
     t = t.replace("          <!-- LIVE:LIST:START -->\n", "          <!-- LIVE:LIST:START -->\n" + row, 1)
 if n1 != 1 or "LIVE:LIST:START" not in t: sys.exit("live archive markers not found")
 open(apath, "w", encoding="utf-8").write(t)
+# shared site chrome: header + menu + footer + light/dark toggle on every page (tools/chrome.py).
+# Never blocks the daily publish: if chrome.py is missing, warn loudly; the next run that has it backfills.
+try:
+    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+    import chrome
+    print("chrome applied to", chrome.apply_all(site), "page(s)")
+except Exception as e:  # noqa
+    print("WARNING: shared chrome NOT applied:", e, file=sys.stderr)
 print("OK", out_dir, "slots:", ",".join(keep), "headline:", headline)
