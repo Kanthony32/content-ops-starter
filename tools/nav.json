@@ -42,6 +42,7 @@
    "short": "Practical advice for players and families.",
    "dek": "Practical recruiting advice for players and families: what to ask, what to verify, and how to compare offers before committing.",
    "articles": [
+    "/nil-explained-for-families/",
     "/does-your-school-pay-athletes/",
     "/student-athlete-fit-system/"
    ]
@@ -128,6 +129,13 @@
    "img": "/img/mvp/hands-ball.jpg",
    "alt": "Black-and-white photo of several players' hands reaching for a basketball",
    "label": "The Game"
+  },
+  "/nil-explained-for-families/": {
+   "title": "NIL, Explained for Families",
+   "dek": "Five terms to know before your next official visit: NIL deals, collectives, brand partnerships, institutional payments and revenue sharing.",
+   "img": "/img/nil/nil-explained-for-families.jpg",
+   "alt": "HoopThink graphic: NIL, explained for families. 5 terms to know, 2 buckets of money, 4 questions for every visit.",
+   "label": "Recruiting Guide"
   }
  }
 }
