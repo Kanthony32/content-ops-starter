@@ -187,7 +187,7 @@ SECTION_PAGE = """<!doctype html>
 
 def build_sections(site):
     for sec in NAV["sections"]:
-        if sec.get("index_exists"):
+        if sec.get("index_exists") or sec.get("hub"):
             continue
         arts = [(h, _art(h)) for h in sec["articles"]]
         cards = ""
@@ -212,8 +212,139 @@ def build_sections(site):
         open(os.path.join(d, "index.html"), "w", encoding="utf-8").write(page)
 
 
+# ---------- The Playbook: every article on one page ----------
+HUB_CSS = """<style>
+.hub-jump{list-style:none;margin:26px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:8px}
+.hub-jump a{display:inline-flex;align-items:center;min-height:40px;padding:0 14px;border:1.5px solid var(--line);border-radius:3px;font-family:BST;font-weight:700;font-size:15px;letter-spacing:.04em;text-transform:uppercase;text-decoration:none;color:var(--white)}
+.hub-jump a:hover{border-color:var(--ball-hi);color:var(--ball-hi)}
+.hub{border-top:1px solid var(--line);padding:56px 0 72px}
+.hub .wrap{display:grid;gap:64px}
+.hub-head{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 18px;border-top:2px solid var(--smoke);padding-top:14px;margin:0 0 22px}
+.hub-head h2{font-family:BSD;font-weight:900;color:var(--white);font-size:clamp(32px,4.6vw,44px);line-height:1;margin:0}
+.hub-head h2 a{color:inherit;text-decoration:none}
+.hub-head h2 a:hover{color:var(--maple)}
+.hub-head p{margin:0;font-family:BST;font-weight:600;font-size:16px;color:var(--dim)}
+.hub-grid{display:grid;gap:30px 24px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:720px){.hub-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (min-width:1000px){.hub-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.hub-card{display:grid;gap:10px;align-content:start;text-decoration:none;color:inherit;min-width:0}
+.hub-card img{width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;box-shadow:0 0 0 1px rgba(255,255,255,.08)}
+.hub-card .label{font-family:BST;font-weight:700;font-size:14px;color:var(--ball-hi);margin:0}
+.hub-card h3{font-family:BSD;font-weight:800;color:var(--white);font-size:27px;line-height:1.04;margin:0;text-wrap:balance}
+.hub-card p{margin:0;font-size:16px;line-height:1.5}
+.hub-card:hover h3{color:var(--maple)}
+.hub-rows{list-style:none;margin:0;padding:0;border-top:1px solid var(--line)}
+.hub-rows a{display:grid;gap:2px 18px;padding:12px 0;border-bottom:1px solid var(--line);text-decoration:none;color:inherit}
+@media (min-width:720px){.hub-rows a{grid-template-columns:210px minmax(0,1fr)}}
+.hub-rows b{font-family:BST;font-weight:700;font-size:15px;color:var(--ball-hi)}
+.hub-rows span{color:var(--white)}
+.hub-rows a:hover span{color:var(--maple)}
+.hub-rows .all b{color:var(--ball-hi)}
+html[data-theme="light"][data-kind="main"] .hub-card img{box-shadow:0 0 0 1px rgba(0,0,0,.12)}
+</style>"""
+
+HUB_PAGE = """<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{name} | Hoop Think</title>
+<meta name="description" content="{dek}">
+<link rel="canonical" href="https://hoopthink.net{path}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://hoopthink.net{path}">
+<meta property="og:title" content="{name} | Hoop Think">
+<meta property="og:description" content="{dek}">
+<meta property="og:image" content="https://hoopthink.net/img/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#15100E">
+<link rel="icon" type="image/png" href="/img/favicon.png">
+<link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+<link rel="preload" href="/fonts/big-shoulders-display-latin-900-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/article.css">
+{css}
+</head>
+<body>
+
+<main>
+  <section class="sec-intro">
+    <div class="wrap">
+      <p class="flag"><b>Section</b> {short}</p>
+      <h1>{name}</h1>
+      <p class="desc">{dek}</p>
+      <ul class="hub-jump" aria-label="Jump to a section">{jump}</ul>
+    </div>
+  </section>
+
+  <section class="hub">
+    <div class="wrap">
+{blocks}    </div>
+  </section>
+</main>
+
+</body>
+</html>
+"""
+
+
+def _archive_rows(site, rel, start, end, limit):
+    """Newest rows from a publisher-owned archive list, as (href, label_html, headline_html)."""
+    try:
+        t = open(os.path.join(site, rel), encoding="utf-8").read()
+        m = re.search(rf"<!-- {start} -->(.*?)<!-- {end} -->", t, re.S)
+        rows = re.findall(r'<li><a href="([^"]+)"><b>(.*?)</b><span>(.*?)</span></a></li>', m.group(1)) if m else []
+    except OSError:
+        rows = []
+    return rows[:limit]
+
+
+def build_hub(site):
+    hub = next((x for x in NAV["sections"] if x.get("hub")), None)
+    if not hub:
+        return
+    blocks, jump = "", ""
+    for sec in NAV["sections"]:
+        if sec.get("hub") or sec["slug"] == "the-24" or not sec["articles"]:
+            continue
+        cards = ""
+        for h in sec["articles"]:
+            a = _art(h)
+            cards += (f'        <a class="hub-card" href="{E(h)}">\n'
+                      f'          <img src="{E(a["img"])}" alt="{E(a["alt"])}" width="1600" height="900" loading="lazy">\n'
+                      f'          <p class="label">{E(a["label"])}</p>\n'
+                      f'          <h3>{E(a["title"])}</h3>\n          <p>{E(a["dek"])}</p>\n        </a>\n')
+        blocks += (f'      <div id="{E(sec["slug"])}">\n'
+                   f'        <div class="hub-head"><h2><a href="{E(sec["path"])}">{E(sec["name"])}</a></h2>'
+                   f'<p>{E(sec["short"])}</p></div>\n        <div class="hub-grid">\n{cards}        </div>\n      </div>\n')
+        jump += f'<li><a href="#{E(sec["slug"])}">{E(sec["name"])}</a></li>'
+    # The 24 + The 24 Live: newest entries, parsed from the archive pages the daily publishers maintain
+    feeds = [
+        ("the-24", "The 24", "/the-24/", "Our daily basketball digest. A new edition every weekday morning.",
+         _archive_rows(site, "the-24/index.html", "THE24:LIST:START", "THE24:LIST:END", 6), "See every edition →"),
+        ("live", "The 24 Live", "/live/", "What is moving right now, updated 24/5.",
+         _archive_rows(site, "live/index.html", "LIVE:LIST:START", "LIVE:LIST:END", 6), "See every Live day →"),
+    ]
+    for slug, name, path, short, rows, more in feeds:
+        li = "".join(f'          <li><a href="{h}"><b>{l}</b><span>{t}</span></a></li>\n' for h, l, t in rows)
+        li += f'          <li><a class="all" href="{path}"><b>{E(more)}</b><span></span></a></li>\n'
+        blocks += (f'      <div id="{slug}">\n'
+                   f'        <div class="hub-head"><h2><a href="{path}">{E(name)}</a></h2><p>{E(short)}</p></div>\n'
+                   f'        <ul class="hub-rows">\n{li}        </ul>\n      </div>\n')
+        jump += f'<li><a href="#{slug}">{E(name)}</a></li>'
+    page = HUB_PAGE.format(name=E(hub["name"]), dek=E(hub["dek"]), short=E(hub["short"]), path=hub["path"],
+                           css=HUB_CSS, jump=jump, blocks=blocks)
+    d = os.path.join(site, hub["path"].strip("/"))
+    os.makedirs(d, exist_ok=True)
+    open(os.path.join(d, "index.html"), "w", encoding="utf-8").write(page)
+
+
 def apply_all(site):
     build_sections(site)
+    try:  # the hub must never block a daily publish
+        build_hub(site)
+    except Exception as e:  # noqa
+        print("WARNING: Playbook hub NOT rebuilt:", e, file=sys.stderr)
     changed = 0
     for p in glob.glob(os.path.join(site, "**", "*.html"), recursive=True):
         if apply_file(p):
