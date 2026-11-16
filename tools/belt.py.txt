@@ -1,0 +1,538 @@
+#!/usr/bin/env python3
+"""HoopThink: The Belt, a lineal NBA championship belt tracker (season-reset mode).
+
+Data lives in tools/belt/belt.json (every game the belt holder played, in order, plus the
+next scheduled defense). This tool validates new results and renders site/the-belt/index.html.
+Run tools/chrome.py.txt afterwards so the page gets the shared header, menu and footer.
+
+  python3 -I tools/belt.py.txt add   --root R --date 2026-11-16 --home "Miami Heat" --away "Houston Rockets" --home-score 112 --away-score 108
+  python3 -I tools/belt.py.txt next  --root R --start 2026-11-18T19:00:00-05:00 --home "Miami Heat" --away "Milwaukee Bucks"
+  python3 -I tools/belt.py.txt next  --root R --none
+  python3 -I tools/belt.py.txt build --root R [--today 2026-11-17]
+  python3 -I tools/belt.py.txt status --root R
+
+Rules: the defending champion starts the season with the belt. The holder defends in every
+counting game (regular season, NBA Cup group and knockout games, play-in, playoffs).
+Preseason, All-Star and the NBA Cup final do not count. Win = keep, loss = belt changes hands.
+Stored as .py.txt because the Site Source artifact won't hold .py files. Python runs it fine.
+"""
+import argparse, datetime as dt, html, json, os, sys
+from zoneinfo import ZoneInfo
+
+E = html.escape
+ET = ZoneInfo("America/New_York")
+
+TEAMS = {  # name: (primary, secondary, short)
+    "Atlanta Hawks": ("#C8102E", "#FDB927", "ATL"), "Boston Celtics": ("#007A33", "#BA9653", "BOS"),
+    "Brooklyn Nets": ("#000000", "#FFFFFF", "BKN"), "Charlotte Hornets": ("#1D1160", "#00788C", "CHA"),
+    "Chicago Bulls": ("#CE1141", "#000000", "CHI"), "Cleveland Cavaliers": ("#860038", "#FDBB30", "CLE"),
+    "Dallas Mavericks": ("#00538C", "#B8C4CA", "DAL"), "Denver Nuggets": ("#0E2240", "#FEC524", "DEN"),
+    "Detroit Pistons": ("#C8102E", "#1D42BA", "DET"), "Golden State Warriors": ("#1D428A", "#FFC72C", "GSW"),
+    "Houston Rockets": ("#CE1141", "#000000", "HOU"), "Indiana Pacers": ("#002D62", "#FDBB30", "IND"),
+    "LA Clippers": ("#C8102E", "#1D428A", "LAC"), "Los Angeles Lakers": ("#552583", "#FDB927", "LAL"),
+    "Memphis Grizzlies": ("#5D76A9", "#12173F", "MEM"), "Miami Heat": ("#98002E", "#F9A01B", "MIA"),
+    "Milwaukee Bucks": ("#00471B", "#EEE1C6", "MIL"), "Minnesota Timberwolves": ("#0C2340", "#78BE20", "MIN"),
+    "New Orleans Pelicans": ("#0C2340", "#C8102E", "NOP"), "New York Knicks": ("#006BB6", "#F58426", "NYK"),
+    "Oklahoma City Thunder": ("#007AC1", "#EF3B24", "OKC"), "Orlando Magic": ("#0077C0", "#C4CED4", "ORL"),
+    "Philadelphia 76ers": ("#006BB6", "#ED174C", "PHI"), "Phoenix Suns": ("#1D1160", "#E56020", "PHX"),
+    "Portland Trail Blazers": ("#E03A3E", "#000000", "POR"), "Sacramento Kings": ("#5A2D81", "#63727A", "SAC"),
+    "San Antonio Spurs": ("#C4CED4", "#000000", "SAS"), "Toronto Raptors": ("#CE1141", "#000000", "TOR"),
+    "Utah Jazz": ("#002B5C", "#F9A01B", "UTA"), "Washington Wizards": ("#002B5C", "#E31837", "WAS"),
+}
+CITY = {"Golden State Warriors": "Golden State", "LA Clippers": "LA", "Los Angeles Lakers": "Los Angeles",
+        "Portland Trail Blazers": "Portland", "Oklahoma City Thunder": "Oklahoma City",
+        "New Orleans Pelicans": "New Orleans", "San Antonio Spurs": "San Antonio", "New York Knicks": "New York"}
+
+
+def nick(t):
+    return {"Philadelphia 76ers": "76ers", "Portland Trail Blazers": "Trail Blazers"}.get(t, t.split()[-1])
+
+
+def city(t):
+    return CITY.get(t, " ".join(t.split()[:-1]))
+
+
+def d(s):
+    return dt.date.fromisoformat(s)
+
+
+def fmt(s, year=True):
+    x = d(s) if isinstance(s, str) else s
+    return f"{x:%b} {x.day}, {x.year}" if year else f"{x:%b} {x.day}"
+
+
+def load(root):
+    p = os.path.join(root, "tools", "belt", "belt.json")
+    return p, json.load(open(p, encoding="utf-8"))
+
+
+def save(p, data):
+    open(p, "w", encoding="utf-8").write(json.dumps(data, indent=2, ensure_ascii=False) + "\n")
+
+
+def reigns(data):
+    """Walk the games and return the list of reigns (oldest first)."""
+    cur = {"n": 0, "team": data["start_holder"], "won": data["start_date"], "beat": None, "score": None,
+           "defenses": [], "lost": None, "lost_to": None, "lost_score": None, "start": True}
+    out = [cur]
+    for g in data["games"]:
+        h, a, hs, as_ = g["home"], g["away"], g["home_score"], g["away_score"]
+        if cur["team"] not in (h, a):
+            raise SystemExit(f"game on {g['date']} ({a} at {h}) does not involve the holder, {cur['team']}")
+        opp = a if cur["team"] == h else h
+        mine, theirs = (hs, as_) if cur["team"] == h else (as_, hs)
+        home = cur["team"] == h
+        if mine > theirs:
+            cur["defenses"].append({"date": g["date"], "opp": opp, "score": f"{mine}-{theirs}", "home": home})
+        else:
+            cur["lost"], cur["lost_to"], cur["lost_score"] = g["date"], opp, f"{mine}-{theirs}"
+            cur = {"n": len(out), "team": opp, "won": g["date"], "beat": cur["team"], "score": f"{theirs}-{mine}",
+                   "defenses": [], "lost": None, "lost_to": None, "lost_score": None, "start": False,
+                   "won_home": not home}
+            out.append(cur)
+    return out
+
+
+def days(r, today):
+    end = d(r["lost"]) if r["lost"] else today
+    return max(0, (end - d(r["won"])).days)
+
+
+# ---------------- commands ----------------
+def cmd_add(a):
+    p, data = load(a.root)
+    for t in (a.home, a.away):
+        if t not in TEAMS:
+            raise SystemExit(f"unknown team {t!r}; use the full name, e.g. 'Miami Heat'")
+    if a.home_score == a.away_score:
+        raise SystemExit("NBA games have no draws")
+    holder = reigns(data)[-1]["team"]
+    if holder not in (a.home, a.away):
+        raise SystemExit(f"{a.away} at {a.home} does not involve the holder, {holder}; not a belt game")
+    last = data["games"][-1]["date"] if data["games"] else data["start_date"]
+    if any(g["date"] == a.date and holder in (g["home"], g["away"]) for g in data["games"]):
+        print(f"already recorded: {holder} game on {a.date}; nothing changed")
+        return
+    if d(a.date) < d(last):
+        raise SystemExit(f"{a.date} is before the last recorded belt game ({last})")
+    data["games"].append({"date": a.date, "home": a.home, "away": a.away,
+                          "home_score": a.home_score, "away_score": a.away_score})
+    save(p, data)
+    now = reigns(data)[-1]["team"]
+    print(("BELT RETAINED: " if now == holder else "NEW CHAMPION: ") + now)
+
+
+def cmd_next(a):
+    p, data = load(a.root)
+    if a.none:
+        data["next"] = None
+    else:
+        for t in (a.home, a.away):
+            if t not in TEAMS:
+                raise SystemExit(f"unknown team {t!r}")
+        holder = reigns(data)[-1]["team"]
+        if holder not in (a.home, a.away):
+            raise SystemExit(f"next game must involve the holder, {holder}")
+        dt.datetime.fromisoformat(a.start)
+        data["next"] = {"start": a.start, "home": a.home, "away": a.away}
+    save(p, data)
+    print("next set:", data["next"])
+
+
+def cmd_status(a):
+    _, data = load(a.root)
+    r = reigns(data)
+    print("holder:", r[-1]["team"], "| since", r[-1]["won"], "| reigns:", len(r), "| transfers:", len(r) - 1)
+    print("last game:", data["games"][-1] if data["games"] else None)
+    print("next:", data.get("next"))
+
+
+# ---------------- page ----------------
+CSS = """<style>
+.belt-page{--gold:#C9A227;--gold-hi:#F2D27A}
+.bt-intro{padding:44px 0 26px}
+.bt-intro .desc{font-size:19px;max-width:40em}
+.bt-hero{padding:8px 0 40px}
+.bt-hero .wrap{display:grid;gap:22px}
+.bt-card{background:var(--panel);border-top:4px solid var(--gold);padding:24px 22px;min-width:0}
+.bt-eyebrow{font-family:BST;font-weight:700;font-size:14px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold-hi);margin:0 0 6px}
+.bt-lives{font-family:BSD;font-weight:900;color:var(--white);font-size:clamp(40px,8vw,76px);line-height:.92;margin:0;text-wrap:balance}
+.bt-lives span{color:var(--gold-hi)}
+.bt-since{font-family:BST;font-weight:600;font-size:17px;color:var(--smoke);margin:12px 0 0}
+.bt-stats{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:20px 0 0;padding:0;list-style:none}
+.bt-stats li{border:1px solid var(--line);padding:10px 12px;min-width:0}
+.bt-stats b{display:block;font-family:BSD;font-weight:900;font-size:38px;line-height:1;color:var(--white)}
+.bt-stats span{font-family:BST;font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim)}
+.bt-latest{margin:16px 0 0;font-size:16px}
+.bt-latest b{font-family:BST;color:var(--white)}
+.strap{position:relative;margin:4px auto 22px;max-width:520px;height:92px;border-radius:999px;display:flex;align-items:center;justify-content:center;gap:8px;
+ background:linear-gradient(180deg,#2a211d,#120d0b);box-shadow:inset 0 0 0 3px var(--gold),inset 0 0 0 7px #120d0b,0 14px 30px -14px rgba(0,0,0,.8)}
+.plate{background:radial-gradient(circle at 35% 30%,#fff4c2,#e6bd4f 38%,#9c7414 100%);color:#2b1d05;border-radius:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:0 0 0 2px #6e520e,inset 0 1px 0 rgba(255,255,255,.6)}
+.plate.side{width:56px;height:56px;border-radius:50%;font-family:BST;font-weight:700;font-size:11px;line-height:1.1;display:none}
+.plate.main{width:158px;height:72px;padding:0 8px}
+.plate.main small{font-family:BST;font-weight:700;font-size:9px;letter-spacing:.24em}
+.plate.main strong{font-family:BSD;font-weight:900;font-size:28px;line-height:.95;letter-spacing:.04em}
+@media (min-width:520px){.plate.side{display:flex}.plate.main{width:196px;height:80px}.plate.main strong{font-size:34px}}
+.bt-next{border-top-color:var(--ball)}
+.bt-next h2{font-family:BSD;font-weight:900;color:var(--white);font-size:clamp(30px,5vw,44px);line-height:1;margin:4px 0 6px}
+.bt-next .when{font-family:BST;font-weight:700;font-size:17px;color:var(--ball-hi);margin:0}
+.bt-clock{display:flex;gap:10px;margin:16px 0}
+.bt-clock div{border:1px solid var(--line);padding:8px 10px;min-width:64px;text-align:center}
+.bt-clock b{display:block;font-family:BSD;font-weight:900;font-size:32px;line-height:1;color:var(--white)}
+.bt-clock span{font-family:BST;font-weight:700;font-size:12px;letter-spacing:.08em;color:var(--dim)}
+.bt-if{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:16px}
+.bt-if b{font-family:BST;color:var(--white)}
+.chip{display:inline-block;width:14px;height:14px;border-radius:50%;border:1px solid rgba(255,255,255,.55);vertical-align:-2px;margin-right:6px;flex:none}
+.bt-tabs-sec{border-top:1px solid var(--line);padding:40px 0 20px}
+.bt-controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin:0 0 22px}
+.bt-tab{font:inherit;font-family:BST;font-weight:700;font-size:16px;letter-spacing:.04em;text-transform:uppercase;min-height:42px;padding:0 16px;border:1.5px solid var(--line);border-radius:3px;background:transparent;color:var(--white);cursor:pointer}
+.bt-tab[aria-selected="true"]{background:var(--ball);border-color:var(--ball);color:var(--ink)}
+.bt-filter{margin-left:auto;display:flex;align-items:center;gap:8px;font-family:BST;font-weight:700;font-size:14px;color:var(--dim)}
+.bt-filter select{font:inherit;font-size:16px;padding:9px 10px;border:1px solid var(--line);background:var(--ink);color:var(--white);border-radius:4px;max-width:60vw}
+.bt-reigns{list-style:none;margin:0;padding:0;display:grid;gap:12px}
+.reign{background:var(--panel);border-left:4px solid var(--c1,var(--line));padding:16px 18px;min-width:0}
+.reign.now{box-shadow:inset 0 0 0 1px var(--gold)}
+.reign-top{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+.reign-n{font-family:BSD;font-weight:900;font-size:28px;color:var(--dim);line-height:1}
+.reign h3{font-family:BSD;font-weight:800;font-size:28px;line-height:1;color:var(--white);margin:0;display:flex;align-items:center}
+.reign .tag{font-family:BST;font-weight:700;font-size:12px;letter-spacing:.1em;background:var(--gold);color:#1a1206;padding:2px 8px;border-radius:2px}
+.reign-days{margin-left:auto;font-family:BST;font-weight:700;font-size:15px;color:var(--smoke)}
+.reign-days b{font-family:BSD;font-size:24px;color:var(--white)}
+.reign p{margin:8px 0 0;font-size:16px;line-height:1.5}
+.reign ul{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-wrap:wrap;gap:6px}
+.reign li{font-family:BST;font-weight:600;font-size:14px;border:1px solid var(--line);padding:4px 8px;color:var(--smoke)}
+.reign li b{color:#6CC49A}
+.bt-table{width:100%;border-collapse:collapse;font-size:16px}
+.bt-table th{font-family:BST;font-weight:700;font-size:13px;letter-spacing:.06em;text-transform:uppercase;color:var(--dim);text-align:left;border-bottom:2px solid var(--smoke);padding:8px 10px}
+.bt-table td{border-bottom:1px solid var(--line);padding:10px;vertical-align:top}
+.bt-table td.team{font-family:BST;font-weight:700;color:var(--white);white-space:nowrap}
+.rn-sm{color:var(--dim)}
+@media (min-width:641px){.rn-sm{display:none}}
+.bt-table .num{text-align:right;font-variant-numeric:tabular-nums}
+@media (max-width:640px){
+ .bt-table thead{display:none}
+ .bt-table,.bt-table tbody,.bt-table tr,.bt-table td{display:block;width:100%}
+ .bt-table tr{padding:12px 0;border-bottom:1px solid var(--line)}
+ .bt-table td{border:0;padding:3px 0;text-align:left}
+ .bt-table td.num{text-align:left}
+ .bt-table td.rn{display:none}
+ .bt-table td.team{font-size:19px;padding-bottom:6px}
+ .bt-table td[data-label]{display:grid;grid-template-columns:7.5em 1fr;gap:10px}
+ .bt-table td[data-label]::before{content:attr(data-label);font-family:BST;font-weight:700;font-size:13px;text-transform:uppercase;color:var(--dim);padding-top:2px}
+}
+.bt-leaders{display:grid;gap:16px;grid-template-columns:minmax(0,1fr)}
+@media (min-width:760px){.bt-leaders{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.bt-leaders .bt-card h3{font-family:BSD;font-weight:800;font-size:26px;color:var(--white);margin:0 0 10px}
+.bt-leaders ol{margin:0;padding:0 0 0 1.4em;font-size:16px}
+.bt-leaders li{padding:5px 0;border-bottom:1px solid var(--line)}
+.bt-leaders li b{font-family:BST;color:var(--white)}
+.bt-leaders li .v{float:right;font-family:BST;font-weight:700;color:var(--gold-hi)}
+.bt-info{padding:30px 0 70px}
+.bt-info .wrap{display:grid;gap:22px}
+@media (min-width:900px){.bt-info .wrap{grid-template-columns:1fr 1fr}.bt-hero .wrap{grid-template-columns:1.25fr 1fr;align-items:start}}
+.bt-info h2{font-family:BSD;font-weight:800;font-size:30px;color:var(--white);margin:0 0 10px}
+.bt-info ul{margin:0;padding:0 0 0 1.2em;font-size:16px}
+.bt-info li{margin:0 0 6px}
+.bt-post{width:100%;min-height:150px;font:inherit;font-size:15px;line-height:1.5;padding:12px;background:var(--ink);color:var(--white);border:1px solid var(--line);border-radius:4px;resize:vertical}
+.bt-copy{margin-top:10px;font:inherit;font-family:BST;font-weight:700;font-size:17px;background:var(--ball);color:var(--ink);border:0;border-radius:4px;padding:11px 18px;cursor:pointer}
+.bt-upd{font-family:BST;font-weight:600;font-size:15px;color:var(--dim);margin:14px 0 0}
+[hidden]{display:none!important}
+html[data-theme="light"][data-kind="main"] .belt-page{--gold:#A9821A;--gold-hi:#8A6510}
+html[data-theme="light"][data-kind="main"] .strap{background:linear-gradient(180deg,#2a211d,#120d0b)}
+</style>"""
+
+JS = """<script>
+(function(){
+  var el=document.getElementById('bt-clock');
+  if(el){var t=new Date(el.getAttribute('data-start')).getTime();
+    var h=el.querySelector('[data-u=h]'),m=el.querySelector('[data-u=m]'),s=el.querySelector('[data-u=s]'),dd=el.querySelector('[data-u=d]'),msg=document.getElementById('bt-clock-msg');
+    var p=function(n){return(n<10?'0':'')+n};
+    var tick=function(){var x=t-Date.now();if(x<=0){el.hidden=true;msg.hidden=false;return}
+      var D=Math.floor(x/864e5),H=Math.floor(x%864e5/36e5),M=Math.floor(x%36e5/6e4),S=Math.floor(x%6e4/1e3);
+      dd.textContent=D;dd.parentNode.hidden=D===0;h.textContent=p(H);m.textContent=p(M);s.textContent=p(S);setTimeout(tick,1000)};
+    tick();}
+  var tabs=[].slice.call(document.querySelectorAll('.bt-tab'));
+  tabs.forEach(function(b){b.addEventListener('click',function(){tabs.forEach(function(x){
+    var on=x===b;x.setAttribute('aria-selected',on);document.getElementById(x.getAttribute('aria-controls')).hidden=!on})})});
+  var f=document.getElementById('bt-team');
+  if(f){f.addEventListener('change',function(){var v=f.value;
+    [].forEach.call(document.querySelectorAll('[data-teams]'),function(r){r.hidden=!!v&&r.getAttribute('data-teams').split('|').indexOf(v)<0});
+    var n=[].filter.call(document.querySelectorAll('.reign'),function(r){return!r.hidden}).length;
+    document.getElementById('bt-count').textContent=n})}
+  var c=document.getElementById('bt-copy');
+  if(c){c.addEventListener('click',function(){var a=document.getElementById('bt-post');a.select();
+    var done=function(){c.textContent='Copied';setTimeout(function(){c.textContent='Copy post'},1800)};
+    if(navigator.clipboard){navigator.clipboard.writeText(a.value).then(done,function(){document.execCommand('copy');done()})}else{document.execCommand('copy');done()}})}
+})();
+</script>"""
+
+
+def chip(t):
+    c1, c2, _ = TEAMS.get(t, ("#888", "#fff", "NBA"))
+    return f'<span class="chip" style="background:linear-gradient(135deg,{c1} 50%,{c2} 50%)" aria-hidden="true"></span>'
+
+
+def vs(home):
+    return "vs" if home else "at"
+
+
+def build(root, today):
+    _, data = load(root)
+    R = reigns(data)
+    cur = R[-1]
+    transfers = len(R) - 1
+    games = data["games"]
+    last = games[-1] if games else None
+    nxt = data.get("next")
+    held = days(cur, today)
+
+    # latest result line
+    latest = ""
+    if last:
+        h, a, hs, as_ = last["home"], last["away"], last["home_score"], last["away_score"]
+        w, l, ws, ls = (h, a, hs, as_) if hs > as_ else (a, h, as_, hs)
+        kind = "Belt retained" if w == cur["team"] and cur["won"] != last["date"] else "Belt changed hands"
+        latest = (f'<p class="bt-latest"><b>Latest:</b> {fmt(last["date"], False)}, {E(w)} {ws}, {E(l)} {ls}. {kind}.</p>')
+
+    since = ("Started the season with the belt as " + E(data["start_note"])) if cur["start"] else (
+        f'Since {fmt(cur["won"])}. Took it from the {E(cur["beat"])}, {cur["score"]}.')
+
+    # next defense
+    if nxt:
+        st = dt.datetime.fromisoformat(nxt["start"]).astimezone(ET)
+        opp = nxt["away"] if nxt["home"] == cur["team"] else nxt["home"]
+        home = nxt["home"] == cur["team"]
+        label = f"{st:%A}"
+        tm = st.strftime("%I:%M %p").lstrip("0")
+        nxt_html = f"""<div class="bt-card bt-next">
+        <p class="bt-eyebrow">Next defense · {E(label)}</p>
+        <h2>{chip(cur["team"])}{E(nick(cur["team"]))} {vs(home)} {chip(opp)}{E(nick(opp))}</h2>
+        <p class="when">{st:%a}, {st:%b} {st.day} · {tm} ET · {"in " + E(city(cur["team"])) if home else "in " + E(city(opp))}</p>
+        <div class="bt-clock" id="bt-clock" data-start="{E(nxt["start"])}" aria-label="Countdown to tip-off">
+          <div hidden><b data-u="d">0</b><span>DAYS</span></div><div><b data-u="h">--</b><span>HRS</span></div><div><b data-u="m">--</b><span>MIN</span></div><div><b data-u="s">--</b><span>SEC</span></div>
+        </div>
+        <p class="bt-upd" id="bt-clock-msg" hidden>Tipped off. The result posts here by 4 AM ET.</p>
+        <ul class="bt-if">
+          <li><b>{E(nick(cur["team"]))} win:</b> belt retained, defense No. {len(cur["defenses"]) + 1}.</li>
+          <li><b>{E(nick(cur["team"]))} lose:</b> the belt goes to the {E(opp)}.</li>
+        </ul>
+      </div>"""
+    else:
+        nxt_html = """<div class="bt-card bt-next"><p class="bt-eyebrow">Next defense</p>
+        <h2>To be announced</h2><p class="bt-upd">The next belt game posts here once it's on the schedule.</p></div>"""
+
+    # timeline (newest first)
+    items = ""
+    for r in reversed(R):
+        teams = {r["team"]} | ({r["beat"]} if r["beat"] else set()) | ({r["lost_to"]} if r["lost_to"] else set()) | {x["opp"] for x in r["defenses"]}
+        c1 = TEAMS.get(r["team"], ("#888",))[0]
+        won = (f'Started the season with the belt ({E(data["start_note"])})' if r["start"]
+               else f'Won {fmt(r["won"])} {vs(r.get("won_home", True))} {E(r["beat"])}, {r["score"]}')
+        end = (f'Lost {fmt(r["lost"])} to the {E(r["lost_to"])}, {r["lost_score"]}' if r["lost"] else "Still holding")
+        dfs = "".join(f'<li>{fmt(x["date"], False)} {vs(x["home"])} {E(nick(x["opp"]))} <b>W {x["score"]}</b></li>' for x in r["defenses"])
+        nd = len(r["defenses"])
+        items += (f'<li class="reign{" now" if not r["lost"] else ""}" style="--c1:{c1}" data-teams="{E("|".join(sorted(teams)))}">'
+                  f'<div class="reign-top"><span class="reign-n">{r["n"]:02d}</span><h3>{chip(r["team"])}{E(r["team"])}</h3>'
+                  f'{"<span class=tag>CURRENT</span>" if not r["lost"] else ""}'
+                  f'<span class="reign-days"><b>{days(r, today)}</b> day{"" if days(r, today) == 1 else "s"} · {nd} defense{"" if nd == 1 else "s"}</span></div>'
+                  f'<p>{won}. {end}.</p>{"<ul>" + dfs + "</ul>" if dfs else ""}</li>\n')
+
+    # lineage table (oldest first)
+    rows = ""
+    for r in R:
+        teams = {r["team"]} | ({r["beat"]} if r["beat"] else set()) | ({r["lost_to"]} if r["lost_to"] else set()) | {x["opp"] for x in r["defenses"]}
+        rows += (f'<tr data-teams="{E("|".join(sorted(teams)))}"><td class="num rn">{r["n"]}</td>'
+                 f'<td class="team"><span class="rn-sm">{r["n"]:02d} · </span>{chip(r["team"])}{E(r["team"])}</td>'
+                 f'<td data-label="Won">{"Season start" if r["start"] else fmt(r["won"], False) + " vs " + E(nick(r["beat"])) + ", " + r["score"]}</td>'
+                 f'<td data-label="Lost">{fmt(r["lost"], False) + " to " + E(nick(r["lost_to"])) + ", " + r["lost_score"] if r["lost"] else "Holding"}</td>'
+                 f'<td class="num" data-label="Days">{days(r, today)}</td><td class="num" data-label="Defenses">{len(r["defenses"])}</td></tr>\n')
+
+    # leaders
+    agg = {}
+    for r in R:
+        x = agg.setdefault(r["team"], {"reigns": 0, "def": 0, "days": 0})
+        x["reigns"] += 1; x["def"] += len(r["defenses"]); x["days"] += days(r, today)
+
+    def ol(pairs, unit):
+        return "<ol>" + "".join(f'<li>{chip(t)}<b>{E(t)}</b><span class="v">{v} {unit if v != 1 else unit.rstrip("s")}</span></li>' for t, v in pairs) + "</ol>"
+    by = lambda k: sorted(((t, v[k]) for t, v in agg.items()), key=lambda p: (-p[1], p[0]))[:5]
+    longest = sorted(R, key=lambda r: (-days(r, today), r["n"]))[:5]
+    most_d = sorted(R, key=lambda r: (-len(r["defenses"]), r["n"]))[:5]
+    leaders = (f'<div class="bt-card"><h3>Most reigns</h3>{ol(by("reigns"), "reigns")}</div>'
+               f'<div class="bt-card"><h3>Total days with the belt</h3>{ol(by("days"), "days")}</div>'
+               f'<div class="bt-card"><h3>Total defenses</h3>{ol(by("def"), "defenses")}</div>'
+               '<div class="bt-card"><h3>Longest single reign</h3><ol>' +
+               "".join(f'<li>{chip(r["team"])}<b>{E(r["team"])}</b> (reign {r["n"]})<span class="v">{days(r, today)} day{"" if days(r, today) == 1 else "s"}</span></li>' for r in longest) +
+               "</ol></div>" + '<div class="bt-card"><h3>Most defenses in one reign</h3><ol>' +
+               "".join(f'<li>{chip(r["team"])}<b>{E(r["team"])}</b> (reign {r["n"]})<span class="v">{len(r["defenses"])}</span></li>' for r in most_d) +
+               "</ol></div>")
+
+    involved = sorted({cur["team"]} | {t for g in games for t in (g["home"], g["away"])})
+    opts = "".join(f'<option value="{E(t)}">{E(t)}</option>' for t in involved)
+
+    # share-ready post
+    tags = f"#NBABelt #TheBelt #HoopThink #{TEAMS[cur['team']][2]}"
+    if last:
+        h, a, hs, as_ = last["home"], last["away"], last["home_score"], last["away_score"]
+        w, l, ws, ls = (h, a, hs, as_) if hs > as_ else (a, h, as_, hs)
+        if cur["won"] == last["date"] and not cur["start"]:
+            post = (f"🏆 NEW CHAMPION: The {w} beat the {l} {ws}-{ls} and take the NBA Championship Belt. "
+                    f"Transfer No. {transfers} of the {data['season']} season.")
+        else:
+            post = (f"🏆 BELT RETAINED: The {w} beat the {l} {ws}-{ls}. Defense No. {len(cur['defenses'])} "
+                    f"of this reign, {held} days and counting.")
+    else:
+        post = f"🏆 The {cur['team']} open the {data['season']} season holding the NBA Championship Belt."
+    if nxt:
+        st = dt.datetime.fromisoformat(nxt["start"]).astimezone(ET)
+        opp = nxt["away"] if nxt["home"] == cur["team"] else nxt["home"]
+        post += f"\n\n⏭️ Next defense: {st:%a} {st:%b} {st.day} {vs(nxt['home'] == cur['team'])} the {opp}."
+    post += f"\n\n📊 Full lineage: hoopthink.net/the-belt/\n\n{tags}"
+
+    upd = (f'Updated through {fmt(last["date"])}.' if last else "Season not started.") + " The tracker updates every day at 4 AM ET."
+    title = f"The Belt: The NBA Championship Belt Lives in {city(cur['team'])} | Hoop Think"
+    desc = (f"HoopThink's lineal NBA championship belt for {data['season']}. The {cur['team']} hold it after "
+            f"{transfers} transfers this season. Full lineage, defenses and leaders, updated daily.")
+
+    page = f"""<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{E(title)}</title>
+<meta name="description" content="{E(desc)}">
+<link rel="canonical" href="https://hoopthink.net/the-belt/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://hoopthink.net/the-belt/">
+<meta property="og:title" content="{E(title)}">
+<meta property="og:description" content="{E(desc)}">
+<meta property="og:image" content="https://hoopthink.net/img/belt/the-belt-og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#15100E">
+<link rel="icon" type="image/png" href="/img/favicon.png">
+<link rel="apple-touch-icon" href="/img/apple-touch-icon.png">
+<link rel="preload" href="/fonts/big-shoulders-display-latin-900-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/article.css">
+{CSS}
+</head>
+<body class="belt-page">
+
+<main>
+  <section class="bt-intro">
+    <div class="wrap">
+      <p class="flag"><b>The Belt</b> Lineal title tracker · {E(data["season"])}</p>
+      <h1>The NBA Championship Belt</h1>
+      <p class="desc">Boxing rules for the NBA. The champion starts the season with the belt, and every game is a title defense. Win and you keep it. Lose and it's gone, that night.</p>
+    </div>
+  </section>
+
+  <section class="bt-hero">
+    <div class="wrap">
+      <div class="bt-card">
+        <div class="strap" aria-hidden="true"><span class="plate side">★<br>NBA</span><span class="plate main"><small>NBA CHAMPIONSHIP</small><strong>BELT</strong><small>LINEAL · {E(data["season"].replace("-", "–"))}</small></span><span class="plate side">★<br>NBA</span></div>
+        <p class="bt-eyebrow">Current holder</p>
+        <p class="bt-lives">The belt lives in <span>{E(city(cur["team"]))}</span></p>
+        <p class="bt-since">{chip(cur["team"])}<b style="color:var(--white)">{E(cur["team"])}</b>. {since}</p>
+        <ul class="bt-stats">
+          <li><b>{cur["n"]}</b><span>Reign No.</span></li>
+          <li><b>{held}</b><span>Days held</span></li>
+          <li><b>{len(cur["defenses"])}</b><span>Defenses</span></li>
+          <li><b>{transfers}</b><span>Transfers this season</span></li>
+        </ul>
+        {latest}
+      </div>
+      {nxt_html}
+    </div>
+  </section>
+
+  <section class="bt-tabs-sec">
+    <div class="wrap">
+      <div class="bt-controls" role="tablist" aria-label="Belt views">
+        <button class="bt-tab" role="tab" aria-selected="true" aria-controls="bt-p-time" type="button">Timeline</button>
+        <button class="bt-tab" role="tab" aria-selected="false" aria-controls="bt-p-table" type="button">Lineage</button>
+        <button class="bt-tab" role="tab" aria-selected="false" aria-controls="bt-p-lead" type="button">Leaders</button>
+        <label class="bt-filter">Team <select id="bt-team"><option value="">All teams</option>{opts}</select></label>
+      </div>
+      <div id="bt-p-time" role="tabpanel">
+        <p class="bt-upd" style="margin:0 0 14px">Showing <span id="bt-count">{len(R)}</span> of {len(R)} reigns, newest first.</p>
+        <ol class="bt-reigns">
+{items}        </ol>
+      </div>
+      <div id="bt-p-table" role="tabpanel" hidden>
+        <table class="bt-table">
+          <thead><tr><th class="num">Reign</th><th>Team</th><th>Won</th><th>Lost</th><th class="num">Days</th><th class="num">Defenses</th></tr></thead>
+          <tbody>
+{rows}          </tbody>
+        </table>
+      </div>
+      <div id="bt-p-lead" role="tabpanel" hidden>
+        <div class="bt-leaders">{leaders}</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="bt-info">
+    <div class="wrap">
+      <div class="bt-card">
+        <h2>How the belt works</h2>
+        <ul>
+          <li>The defending NBA champion starts the season with the belt. For {E(data["season"])}, that's the {E(data["start_holder"])}.</li>
+          <li>The holder defends it in every game that counts: regular season, NBA Cup group and knockout games, the play-in and the playoffs.</li>
+          <li>Preseason, the All-Star Game and the NBA Cup final don't count.</li>
+          <li>Win and you keep it. Lose and the belt changes hands immediately. There are no draws.</li>
+          <li>Season-reset mode: the lineage starts over each year with the new champion.</li>
+        </ul>
+        <p class="bt-upd">{E(upd)}</p>
+      </div>
+      <div class="bt-card">
+        <h2>Share the belt</h2>
+        <label for="bt-post" class="bt-upd" style="display:block;margin:0 0 8px">Ready-to-post copy for the latest result:</label>
+        <textarea class="bt-post" id="bt-post" readonly>{E(post)}</textarea>
+        <button class="bt-copy" id="bt-copy" type="button">Copy post</button>
+      </div>
+    </div>
+  </section>
+</main>
+
+{JS}
+</body>
+</html>
+"""
+    out = os.path.join(root, "site", "the-belt")
+    os.makedirs(out, exist_ok=True)
+    open(os.path.join(out, "index.html"), "w", encoding="utf-8").write(page)
+    print(f"built site/the-belt/index.html: holder {cur['team']}, reign {cur['n']}, {held} days, "
+          f"{len(cur['defenses'])} defenses, {transfers} transfers; next: {nxt['away'] + ' at ' + nxt['home'] if nxt else 'TBD'}")
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    sub = ap.add_subparsers(dest="cmd", required=True)
+    for name in ("add", "next", "build", "status"):
+        s = sub.add_parser(name)
+        s.add_argument("--root", required=True)
+        if name == "add":
+            s.add_argument("--date", required=True); s.add_argument("--home", required=True); s.add_argument("--away", required=True)
+            s.add_argument("--home-score", type=int, required=True); s.add_argument("--away-score", type=int, required=True)
+        if name == "next":
+            s.add_argument("--start"); s.add_argument("--home"); s.add_argument("--away"); s.add_argument("--none", action="store_true")
+        if name == "build":
+            s.add_argument("--today")
+    a = ap.parse_args()
+    a.root = os.path.abspath(a.root)
+    if a.cmd == "add":
+        cmd_add(a)
+    elif a.cmd == "next":
+        if not a.none and not (a.start and a.home and a.away):
+            sys.exit("next needs --start, --home and --away (or --none)")
+        cmd_next(a)
+    elif a.cmd == "status":
+        cmd_status(a)
+    else:
+        today = d(a.today) if a.today else dt.datetime.now(ET).date()
+        build(a.root, today)
+
+
+if __name__ == "__main__":
+    main()

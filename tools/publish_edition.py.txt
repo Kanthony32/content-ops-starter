@@ -2,7 +2,7 @@
 """Turn a reviewed edition of The 24 into a public HoopThink page and update the site source.
 
 Usage:
-  python3 -I publish_edition.py --root DEPLOY_DIR --edition EDITION.html --date 2026-10-28 --no 002 \
+  python3 -I tools/publish_edition.py.txt --root DEPLOY_DIR --edition EDITION.html --date 2026-10-28 --no 002 \
       --headline "Headline." --kicker "The Game · City" --plus "Plus: ..." \
       --cards CARDS_DIR --fonts FONTSOURCE_NODE_MODULES_DIR
 
@@ -28,11 +28,32 @@ out_dir = os.path.join(site, "the-24", slug)
 os.makedirs(os.path.join(out_dir, "cards"), exist_ok=True)
 H = html.escape
 
+# 0. edition number: the site's own archive is the source of truth, not the ClickUp task name.
+#    Same date already on the site -> keep that number (a re-publish). New date -> highest number + 1.
+_src_no = A.no
+def _archive_numbers():
+    try:
+        t = open(os.path.join(site, "the-24", "index.html"), encoding="utf-8").read()
+        m = re.search(r"<!-- THE24:LIST:START -->(.*?)<!-- THE24:LIST:END -->", t, re.S)
+        return {d_: int(n_) for d_, n_ in re.findall(r'href="/the-24/(\d{4}-\d{2}-\d{2})/"><b>No\. (\d+)', m.group(1))} if m else {}
+    except OSError:
+        return {}
+_nums = _archive_numbers()
+if A.date in _nums:
+    _want = _nums[A.date]
+else:
+    _want = max(_nums.values(), default=0) + 1
+_want = f"{_want:03d}"
+if _want != A.no:
+    print(f"WARNING: edition number corrected: task says No. {A.no}, site archive says No. {_want}", file=sys.stderr)
+A.no = _want
+print("EDITION_NUMBER", A.no)
+
 # 1. cards
 for kind in ("number", "scores"):
-    src = os.path.join(A.cards, f"the-24-{A.no}-{kind}.png")
+    src = os.path.join(A.cards, f"the-24-{_src_no}-{kind}.png")
     if os.path.exists(src):
-        shutil.copy(src, os.path.join(out_dir, "cards", os.path.basename(src)))
+        shutil.copy(src, os.path.join(out_dir, "cards", f"the-24-{A.no}-{kind}.png"))
 
 # 2. banner (1600x900) for homepage card + link previews
 banner = os.path.join(out_dir, "cards", f"the-24-{A.no}-banner.jpg")
@@ -71,6 +92,9 @@ s = re.sub(r'\s*<!-- SOCIAL PACK -->.*?</section>\n', "\n", s, count=1, flags=re
 s = re.sub(r'<a href="#social-pack">Social Pack</a>', "", s)
 s = re.sub(r"<script>.*?</script>\s*", "", s, flags=re.S)
 s = re.sub(r"Edition No\. (\d+) · Pilot", r"Edition No. \1", s)
+if _src_no != A.no:
+    s = re.sub(rf"\bNo\. ?{re.escape(_src_no)}\b", f"No. {A.no}", s)
+    s = s.replace(f"the-24-{_src_no}-", f"the-24-{A.no}-")
 s = s.replace('href="https://hoopthink.net" target="_blank" rel="noopener">hoopthink.net</a>', 'href="/#get">hoopthink.net</a>')
 s = re.sub(r"<title>.*?</title>", "", s, count=1, flags=re.S)
 s = s.replace('<meta name="claude:viewport-fit-sides" content="cover">', "")
@@ -157,11 +181,23 @@ else:
     t = t.replace("          <!-- THE24:LIST:START -->\n", "          <!-- THE24:LIST:START -->\n" + row, 1)
 if n1 != 1 or "THE24:LIST:START" not in t: sys.exit("archive markers not found")
 open(apath, "w", encoding="utf-8").write(t)
-# shared site chrome: header + menu + footer + light/dark toggle on every page (tools/chrome.py).
-# Never blocks the daily publish: if chrome.py is missing, warn loudly; the next run that has it backfills.
+# shared site chrome: header + menu + footer + light/dark toggle + Playbook hub (tools/chrome.py.txt).
+# Tools are stored as .py.txt because the Site Source artifact won't hold .py files. Python runs them fine.
+# Never blocks the daily publish: if chrome is missing, warn loudly; the next run that has it backfills.
+sys.dont_write_bytecode = True  # keep tools/ free of __pycache__ (it would land in the manifest)
+def _load_chrome():
+    import importlib.machinery, importlib.util
+    here = os.path.dirname(os.path.abspath(__file__))
+    for name in ("chrome.py.txt", "chrome.py"):
+        p = os.path.join(here, name)
+        if os.path.exists(p):
+            ld = importlib.machinery.SourceFileLoader("chrome", p)
+            mod = importlib.util.module_from_spec(importlib.util.spec_from_loader("chrome", ld))
+            ld.exec_module(mod)
+            return mod
+    raise FileNotFoundError("tools/chrome.py.txt not found")
 try:
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-    import chrome
+    chrome = _load_chrome()
     print("chrome applied to", chrome.apply_all(site), "page(s)")
 except Exception as e:  # noqa
     print("WARNING: shared chrome NOT applied:", e, file=sys.stderr)

@@ -2,7 +2,7 @@
 """Publish approved The 24 Live updates for one day and update the site source.
 
 Usage:
-  python3 -I publish_live.py --root DEPLOY_DIR --review REVIEW.html --date 2026-11-04 \
+  python3 -I tools/publish_live.py.txt --root DEPLOY_DIR --review REVIEW.html --date 2026-11-04 \
       --slots noon[,5pm] --fonts FONTSOURCE_NODE_MODULES_DIR
 
 DEPLOY_DIR holds netlify.toml, site/ and tools/live/template.html.
@@ -320,11 +320,23 @@ else:
     t = t.replace("          <!-- LIVE:LIST:START -->\n", "          <!-- LIVE:LIST:START -->\n" + row, 1)
 if n1 != 1 or "LIVE:LIST:START" not in t: sys.exit("live archive markers not found")
 open(apath, "w", encoding="utf-8").write(t)
-# shared site chrome: header + menu + footer + light/dark toggle on every page (tools/chrome.py).
-# Never blocks the daily publish: if chrome.py is missing, warn loudly; the next run that has it backfills.
+# shared site chrome: header + menu + footer + light/dark toggle + Playbook hub (tools/chrome.py.txt).
+# Tools are stored as .py.txt because the Site Source artifact won't hold .py files. Python runs them fine.
+# Never blocks the daily publish: if chrome is missing, warn loudly; the next run that has it backfills.
+sys.dont_write_bytecode = True  # keep tools/ free of __pycache__ (it would land in the manifest)
+def _load_chrome():
+    import importlib.machinery, importlib.util
+    here = os.path.dirname(os.path.abspath(__file__))
+    for name in ("chrome.py.txt", "chrome.py"):
+        p = os.path.join(here, name)
+        if os.path.exists(p):
+            ld = importlib.machinery.SourceFileLoader("chrome", p)
+            mod = importlib.util.module_from_spec(importlib.util.spec_from_loader("chrome", ld))
+            ld.exec_module(mod)
+            return mod
+    raise FileNotFoundError("tools/chrome.py.txt not found")
 try:
-    sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
-    import chrome
+    chrome = _load_chrome()
     print("chrome applied to", chrome.apply_all(site), "page(s)")
 except Exception as e:  # noqa
     print("WARNING: shared chrome NOT applied:", e, file=sys.stderr)

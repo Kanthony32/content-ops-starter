@@ -1,0 +1,121 @@
+#!/usr/bin/env python3
+"""HoopThink pre-deploy check. Run it after building and BEFORE deploying.
+
+  python3 -I tools/check_site.py.txt --root WORK_DIR [--write-manifest]
+
+WORK_DIR holds netlify.toml, site/ and tools/. Exits 1 (and prints FAIL lines) if anything
+would break the live site; never deploy when it fails. --write-manifest rewrites
+WORK_DIR/manifest.txt from the files actually on disk (sorted), so publishers never hand-edit it.
+Stored as .py.txt because the Site Source artifact won't hold .py files. Python runs it fine.
+"""
+import argparse, glob, os, re, sys
+
+ap = argparse.ArgumentParser()
+ap.add_argument("--root", required=True)
+ap.add_argument("--write-manifest", action="store_true")
+A = ap.parse_args()
+root = os.path.abspath(A.root)
+site = os.path.join(root, "site")
+fails, warns = [], []
+fail = fails.append
+warn = warns.append
+
+
+def read(rel):
+    try:
+        return open(os.path.join(root, rel), encoding="utf-8").read()
+    except OSError:
+        fail(f"missing {rel}")
+        return ""
+
+
+# 1. deploy layout
+toml = read("netlify.toml")
+if 'publish = "site"' not in toml or "NETLIFY_NEXT_PLUGIN_SKIP" not in toml:
+    fail("netlify.toml is not the standard HoopThink config")
+for rel in ["site/index.html", "site/404.html", "site/the-24/index.html", "site/live/index.html",
+            "site/the-playbook/index.html", "site/briefing/thanks/index.html",
+            "site/briefing/hoop-think-preview-issue.pdf", "site/site.css", "site/site.js",
+            "tools/chrome.py.txt", "tools/nav.json", "tools/publish_edition.py.txt",
+            "tools/publish_live.py.txt", "tools/live/template.html"]:
+    if not os.path.exists(os.path.join(root, rel)):
+        fail(f"missing {rel}")
+
+# 2. homepage: signup form + publisher markers
+home = read("site/index.html")
+for need in ['data-netlify="true"', 'netlify-honeypot="company"', 'name="form-name"', 'name="company"']:
+    if need not in home:
+        fail(f"homepage signup form lost {need}")
+for a, b in [("THE24:HOME:START", "THE24:HOME:END"), ("LIVE:HOME:START", "LIVE:HOME:END")]:
+    if home.count(a) != 1 or home.count(b) != 1:
+        fail(f"homepage needs exactly one {a}/{b} pair")
+if not re.search(r"<!-- THE24:HOME:END -->\n", home):
+    fail("THE24:HOME:END must be followed by a newline")
+
+# 3. The 24 archive: unique, ordered edition numbers
+arch = read("site/the-24/index.html")
+m = re.search(r"<!-- THE24:LIST:START -->(.*?)<!-- THE24:LIST:END -->", arch, re.S)
+rows = re.findall(r'href="/the-24/(\d{4}-\d{2}-\d{2})/"><b>No\. (\d+)', m.group(1)) if m else []
+if not rows:
+    fail("The 24 archive list is empty or its markers are missing")
+nums = [int(n) for _, n in rows]
+if len(set(nums)) != len(nums):
+    fail(f"duplicate edition numbers in The 24 archive: {sorted(n for n in set(nums) if nums.count(n) > 1)}")
+if nums != sorted(nums, reverse=True):
+    fail("The 24 archive is not newest-first by number")
+for d, _ in rows:
+    if not os.path.exists(os.path.join(site, "the-24", d, "index.html")):
+        fail(f"archive links /the-24/{d}/ but the page is missing")
+
+# 4. Playbook is current: its The 24 / Live rows match the newest archive rows
+pb = read("site/the-playbook/index.html")
+if rows and f'href="/the-24/{rows[0][0]}/"' not in pb:
+    fail(f"The Playbook doesn't list the newest The 24 edition ({rows[0][0]}); chrome didn't rebuild the hub")
+live = read("site/live/index.html")
+lm = re.search(r"<!-- LIVE:LIST:START -->(.*?)<!-- LIVE:LIST:END -->", live, re.S)
+lrows = re.findall(r'href="/live/(\d{4}-\d{2}-\d{2})/"', lm.group(1)) if lm else []
+if lrows and f'href="/live/{lrows[0]}/"' not in pb:
+    fail(f"The Playbook doesn't list the newest Live day ({lrows[0]}); chrome didn't rebuild the hub")
+
+# 5. every page carries the shared header/footer; no review-only material leaks
+for p in glob.glob(os.path.join(site, "**", "*.html"), recursive=True):
+    rel = os.path.relpath(p, root)
+    s = open(p, encoding="utf-8").read()
+    if "<!--HT:HEADER-->" not in s or "<!--HT:FOOTER-->" not in s:
+        fail(f"{rel} is missing the shared header/footer")
+    for bad in ("NOT FOR PUBLICATION", "{{", 'class="desk"'):
+        if bad in s:
+            fail(f"{rel} contains review-only text: {bad}")
+    if "HoopThink Live" in s:
+        warn(f"{rel} still says 'HoopThink Live' (renamed The 24 Live)")
+    for src in re.findall(r'(?:src|href)="(/[^"#?]+\.(?:jpg|jpeg|png|webp|css|js|pdf|woff2))"', s):
+        if not os.path.exists(os.path.join(site, src.lstrip("/"))):
+            fail(f"{rel} references missing file {src}")
+
+# 6. no stray .py tools (the artifact refuses them; a stale copy would shadow the .py.txt)
+for p in glob.glob(os.path.join(root, "tools", "**", "*.py"), recursive=True):
+    warn(f"stale {os.path.relpath(p, root)} present; the .py.txt version is the one that's used")
+
+# 7. manifest
+files = sorted(os.path.relpath(p, root).replace(os.sep, "/")
+               for p in glob.glob(os.path.join(root, "**", "*"), recursive=True)
+               if os.path.isfile(p) and not os.path.basename(p).startswith("_"))
+files = [f for f in files if f == "netlify.toml" or f.startswith(("site/", "tools/"))]
+files = [f for f in files if not (f.startswith("tools/") and f.endswith(".py"))]
+files = [f for f in files if "__pycache__" not in f and not f.endswith(".pyc")]
+mpath = os.path.join(root, "manifest.txt")
+if A.write_manifest:
+    open(mpath, "w", encoding="utf-8").write("\n".join(files) + "\n")
+    print(f"manifest.txt written: {len(files)} files")
+elif os.path.exists(mpath):
+    listed = [x.strip() for x in open(mpath, encoding="utf-8") if x.strip()]
+    missing = [x for x in listed if not os.path.exists(os.path.join(root, x))]
+    if missing:
+        fail(f"manifest lists {len(missing)} file(s) not on disk, e.g. {missing[:3]}")
+
+for w in warns:
+    print("WARN", w)
+for f in fails:
+    print("FAIL", f)
+print("CHECK", "FAILED" if fails else "PASSED", f"({len(fails)} fail, {len(warns)} warn)")
+sys.exit(1 if fails else 0)

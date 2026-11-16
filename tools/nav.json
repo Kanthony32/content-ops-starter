@@ -48,6 +48,7 @@
       "dek": "The money, structure and strategy shaping college and grassroots sports: revenue sharing, NIL, and how programs are built to pay for it.",
       "powered_by": "Westview Market Intelligence",
       "articles": [
+        "/tennessee-cba-term-sheet/",
         "/kentucky-champions-blue-llc/"
       ]
     },
@@ -80,6 +81,20 @@
           "href": "/live/"
         }
       ]
+    },
+    {
+      "slug": "the-belt",
+      "name": "The Belt",
+      "path": "/the-belt/",
+      "short": "The NBA championship belt, defended every night.",
+      "index_exists": true,
+      "articles": [],
+      "extra": [
+        {
+          "title": "Who holds the belt now",
+          "href": "/the-belt/"
+        }
+      ]
     }
   ],
   "articles": {
@@ -99,7 +114,7 @@
     },
     "/wowy-playing-on-a-winning-team-vs-making-one-win/": {
       "title": "WOWY: Playing on a Winning Team vs. Making One Win",
-      "dek": "Career winning percentage tells us what happened to a player\u2019s team. WOWY helps us understand how much of it was connected to the player.",
+      "dek": "Career winning percentage tells us what happened to a player’s team. WOWY helps us understand how much of it was connected to the player.",
       "img": "/img/wowy/wowy-banner.jpg",
       "alt": "HoopThink Analytics graphic: WOWY, With Or Without You. Playing on a winning team vs. making one win.",
       "label": "Analytics"
@@ -113,7 +128,7 @@
     },
     "/ball-screen-reads/": {
       "title": "The Ball Screen Has Two Defenders",
-      "dek": "Every ball screen is a 2-on-2 problem. Most guards solve it like it\u2019s 1-on-1. The reads, an eight-rung ladder, and one wrinkle.",
+      "dek": "Every ball screen is a 2-on-2 problem. Most guards solve it like it’s 1-on-1. The reads, an eight-rung ladder, and one wrinkle.",
       "img": "/img/ball-screen/two-defenders-banner.jpg",
       "alt": "HoopThink graphic: Two defenders. Read both. Drop, hedge, switch and blitz, with the handler's read for each",
       "label": "The Game"
@@ -127,7 +142,7 @@
     },
     "/how-to-watch-the-game/": {
       "title": "How to Watch the Game",
-      "dek": "Five actions you\u2019re going to see every single night. Stop tracking the ball. Start tracking the screens.",
+      "dek": "Five actions you’re going to see every single night. Stop tracking the ball. Start tracking the screens.",
       "img": "/img/film-room/how-to-watch-banner.jpg",
       "alt": "HoopThink Film Room graphic: Zoom, Get, 77, Spain and Chicago, with the sequence for each",
       "label": "Film Room"
@@ -152,6 +167,13 @@
       "img": "/img/playbook/horns-slip-banner.jpg",
       "alt": "Xs and Os, Entry 01: Horns Slip, with a half-court diagram of the slip to the rim",
       "label": "Xs and Os"
+    },
+    "/tennessee-cba-term-sheet/": {
+      "title": "Tennessee Wrote a College Sports CBA Down",
+      "dek": "A cap, a floor, a retention pool and a real transfer window. What Tennessee's term sheet gets right, and what it can't fix.",
+      "img": "/img/tennessee/term-sheet-banner.jpg",
+      "alt": "HoopThink graphic: Tennessee wrote it down. 15-day transfer window, 2 years to earn retention pay, lifetime catastrophic coverage.",
+      "label": "Sports Business"
     }
   }
 }
