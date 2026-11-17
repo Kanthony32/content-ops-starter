@@ -157,3 +157,41 @@ body.home .foot .motto{margin-left:auto;color:var(--smoke)}
   body.home .latest .card[href^="/live/"] h2,body.home .latest .card[href^="/the-24/"] h2{font-size:clamp(32px,3.4vw,42px)}
 }
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+/* ---------- hero carousel: the three newest articles ---------- */
+body.home .hero-car{position:relative;isolation:isolate;overflow:hidden;background:#0A0A0A;border-bottom:1px solid var(--line);padding:36px 0 30px}
+body.home .hero-car::after{content:"";position:absolute;inset:0;z-index:-1;pointer-events:none;background-image:linear-gradient(90deg,rgba(255,255,255,.05) 1px,transparent 1px);background-size:72px 100%}
+.car-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:0 0 16px}
+.car-head .eyebrow{margin:0}
+.car-all{font-family:var(--f-label);font-weight:700;font-size:14px;letter-spacing:.14em;text-transform:uppercase;color:var(--wood);text-decoration:none;white-space:nowrap}
+.car-all:hover{color:var(--ball-hi)}
+.car-track{display:flex;overflow-x:auto;overscroll-behavior-x:contain;scroll-snap-type:x mandatory;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+.car-track::-webkit-scrollbar{display:none}
+.car-track:focus-visible{outline:2px solid var(--ball-hi);outline-offset:4px}
+.car-slide{flex:0 0 100%;min-width:0;scroll-snap-align:start;display:grid;grid-template-columns:minmax(0,1fr);gap:20px;align-content:start}
+.car-img{display:block;border:1px solid var(--line);border-top:3px solid var(--ball)}
+.car-img img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover}
+.car-copy{min-width:0}
+.car-copy .label{font-family:var(--f-label);font-weight:700;font-size:14px;letter-spacing:.16em;text-transform:uppercase;color:var(--ball-hi);margin:0 0 10px}
+.car-copy h2{font-family:var(--f-display);font-weight:900;color:#fff;text-transform:uppercase;font-size:clamp(34px,8.4vw,58px);line-height:.95;margin:0 0 14px;text-wrap:balance}
+.car-copy h2 a{color:inherit;text-decoration:none}
+.car-copy h2 a:hover{color:var(--ball-hi)}
+.car-copy .dek{font-family:var(--f-serif);font-size:clamp(17px,2vw,20px);line-height:1.5;color:#E6E1DB;margin:0 0 22px;max-width:34em}
+.car-ctl{display:flex;align-items:center;justify-content:center;gap:6px;margin-top:22px}
+.car-ctl[hidden]{display:none}
+.car-btn{width:44px;height:44px;display:grid;place-items:center;border:1px solid var(--line);background:var(--panel);color:#fff;cursor:pointer}
+.car-btn:hover{border-color:var(--wood);color:var(--ball-hi)}
+.car-dots{display:flex}
+.car-dot{position:relative;width:44px;height:44px;padding:0;border:0;background:none;cursor:pointer}
+.car-dot::before{content:"";position:absolute;left:8px;right:8px;top:50%;height:4px;margin-top:-2px;background:#4A423C}
+.car-dot[aria-current="true"]::before{background:var(--ball-hi)}
+.car-dot:focus-visible,.car-btn:focus-visible{outline:2px solid var(--ball-hi);outline-offset:2px}
+@media (min-width:900px){
+  body.home .hero-car{padding:52px 0 40px}
+  .car-slide{grid-template-columns:minmax(0,1.2fr) minmax(0,1fr);gap:48px;align-items:center}
+  .car-copy h2{font-size:clamp(40px,4.4vw,60px)}
+  .car-ctl{justify-content:flex-start}
+}
+body.home .hero-car .car-btn{background:#1B1B1B;color:#fff;border-color:#3A3A3A}
+body.home .hero-car .car-btn:hover{border-color:var(--wood);color:var(--ball-hi)}
+body.home .mission .signoff strong{color:inherit}

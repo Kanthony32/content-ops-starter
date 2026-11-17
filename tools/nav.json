@@ -48,6 +48,7 @@
       "dek": "The money, structure and strategy shaping college and grassroots sports: revenue sharing, NIL, and how programs are built to pay for it.",
       "powered_by": "Westview Market Intelligence",
       "articles": [
+        "/players-era-different-future/",
         "/tennessee-cba-term-sheet/",
         "/kentucky-champions-blue-llc/"
       ]
@@ -173,6 +174,13 @@
       "dek": "A cap, a floor, a retention pool and a real transfer window. What Tennessee's term sheet gets right, and what it can't fix.",
       "img": "/img/tennessee/term-sheet-banner.jpg",
       "alt": "HoopThink graphic: Tennessee wrote it down. 15-day transfer window, 2 years to earn retention pay, lifetime catastrophic coverage.",
+      "label": "Sports Business"
+    },
+    "/players-era-different-future/": {
+      "title": "Players Era Is Betting on a Different Future for College Basketball",
+      "dek": "24 programs, two tournaments, 37 games. Are we building better college basketball events, or better commercial vehicles around college basketball?",
+      "img": "/img/players-era/players-era-banner.jpg",
+      "alt": "HoopThink graphic: Players Era is betting on a different future. 24 programs, 2 tournaments, 37 games.",
       "label": "Sports Business"
     }
   }
