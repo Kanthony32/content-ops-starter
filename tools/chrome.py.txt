@@ -75,7 +75,11 @@ def footer_html():
 def kind_of(s):
     if 'class="sitebar"' in s or 'class="mast"' in s or "<!--HT:KIND:edition-->" in s:
         return "edition"
-    if re.search(r'<header class="bar">', s) or 'class="foot-top"' in s or "<!--HT:KIND:live-->" in s:
+    # A Live page keeps its own <style id="live-css"> forever; the old header/foot-top markers vanish once
+    # the shared chrome has been applied, so without this a second run re-tagged Live pages as "main"
+    # (light-mode text color on the dark Live page = invisible writing).
+    if (re.search(r'<header class="bar">', s) or 'class="foot-top"' in s or "<!--HT:KIND:live-->" in s
+            or 'id="live-css"' in s):
         return "live"
     if re.search(r'<body[^>]*class="[^"]*\bhome\b', s):
         return "home"

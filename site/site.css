@@ -42,6 +42,15 @@ html[data-theme="light"][data-kind="live"]{
 /* Live pages: the photo hero (and the plain hero variant) stay dark in both themes */
 html[data-theme="light"][data-kind="live"] .hero{--bg:#0A0A0A;--surface:#141414;--surface2:#1B1B1B;--line:#2A2A2A;--wood:#E8A85C;--orange:#FF5A00;--orange2:#FF6B1A;--white:#FFFFFF;--body:#C4BFB9;--muted:#948F8A;--live:#FF5A4A;--alert:#FF8A72;--ok:#6CC49A}
 
+/* Homepage "Inside the preview issue" list: the page titles inherited white, invisible on the light cards. */
+html[data-theme="light"][data-kind="home"] body.home .story .title{color:var(--hw)}
+
+/* Live pages in light mode: the black ticker strip and footer stay dark, so they keep the dark text tokens;
+   the Editor's Take paragraphs hard-code near-white text in the page CSS, so point them at the theme body color. */
+html[data-theme="light"][data-kind="live"] .ticker,
+html[data-theme="light"][data-kind="live"] .foot{--white:#FFFFFF;--body:#C4BFB9;--muted:#948F8A;--wood:#E8A85C;--orange2:#FF6B1A;--line:#2A2A2A}
+html[data-theme="light"][data-kind="live"] .take p:not(.kicker){color:var(--body)}
+
 /* ---------- shared header ---------- */
 .ht-bar,.ht-foot{
   --ht-bg:#0E0B0A;--ht-fg:#FFFFFF;--ht-mut:#B7AEA6;--ht-line:#2E2622;--ht-acc:#FF6B1A;--ht-on:#000;--ht-chip:#1C1613;
