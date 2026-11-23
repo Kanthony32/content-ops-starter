@@ -122,12 +122,26 @@
       "away": "Houston Rockets",
       "home_score": 128,
       "away_score": 110
+    },
+    {
+      "date": "2026-11-18",
+      "home": "Miami Heat",
+      "away": "Milwaukee Bucks",
+      "home_score": 137,
+      "away_score": 130
+    },
+    {
+      "date": "2026-11-22",
+      "home": "Miami Heat",
+      "away": "Oklahoma City Thunder",
+      "home_score": 123,
+      "away_score": 113
     }
   ],
   "next": {
-    "start": "2026-11-18T19:00:00-05:00",
-    "home": "Miami Heat",
-    "away": "Milwaukee Bucks"
+    "start": "2026-11-25T17:00:00-05:00",
+    "home": "Philadelphia 76ers",
+    "away": "Miami Heat"
   },
   "updated": "2026-11-16"
 }

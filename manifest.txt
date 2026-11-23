@@ -1,6 +1,7 @@
 netlify.toml
 site/404.html
 site/article.css
+site/ball-screen-footwork/index.html
 site/ball-screen-reads/index.html
 site/briefing/hoop-think-preview-issue.pdf
 site/briefing/thanks/index.html
@@ -20,6 +21,7 @@ site/img/ball-screen/two-defenders-banner.jpg
 site/img/belt/the-belt-og.jpg
 site/img/cover.jpg
 site/img/favicon.png
+site/img/film-room/ball-screen-footwork-banner.jpg
 site/img/film-room/how-to-watch-banner.jpg
 site/img/home/hero-game-800.jpg
 site/img/home/hero-game.jpg
@@ -68,6 +70,8 @@ site/live/2026-11-13/index.html
 site/live/2026-11-13/live-banner.jpg
 site/live/2026-11-17/index.html
 site/live/2026-11-17/live-banner.jpg
+site/live/2026-11-19/index.html
+site/live/2026-11-19/live-banner.jpg
 site/live/index.html
 site/minimum-viable-production/index.html
 site/nil-explained-for-families/index.html
@@ -151,6 +155,18 @@ site/the-24/2026-11-17/cards/the-24-016-banner.jpg
 site/the-24/2026-11-17/cards/the-24-016-number.png
 site/the-24/2026-11-17/cards/the-24-016-scores.png
 site/the-24/2026-11-17/index.html
+site/the-24/2026-11-18/cards/the-24-017-banner.jpg
+site/the-24/2026-11-18/cards/the-24-017-number.png
+site/the-24/2026-11-18/cards/the-24-017-scores.png
+site/the-24/2026-11-18/index.html
+site/the-24/2026-11-19/cards/the-24-018-banner.jpg
+site/the-24/2026-11-19/cards/the-24-018-number.png
+site/the-24/2026-11-19/cards/the-24-018-scores.png
+site/the-24/2026-11-19/index.html
+site/the-24/2026-11-20/cards/the-24-019-banner.jpg
+site/the-24/2026-11-20/cards/the-24-019-number.png
+site/the-24/2026-11-20/cards/the-24-019-scores.png
+site/the-24/2026-11-20/index.html
 site/the-24/index.html
 site/the-belt/index.html
 site/the-playbook/horns-slip/index.html

@@ -23,6 +23,7 @@
       "short": "Film, analytics and the decisions behind the game.",
       "dek": "How the game works, read the way a scout reads it. Film breakdowns, analytics and the decisions behind what happens on the floor.",
       "articles": [
+        "/ball-screen-footwork/",
         "/ball-screen-reads/",
         "/timeout-economy/",
         "/wowy-playing-on-a-winning-team-vs-making-one-win/",
@@ -182,6 +183,13 @@
       "img": "/img/players-era/players-era-banner.jpg",
       "alt": "HoopThink graphic: Players Era is betting on a different future. 24 programs, 2 tournaments, 37 games.",
       "label": "Sports Business"
+    },
+    "/ball-screen-footwork/": {
+      "title": "The Best On-Ball Defenders Solve the Ball Screen the Same Way",
+      "dek": "Holiday, Daniels, Allen and Wade come from different eras and bodies, yet the footwork is identical: shrink the space, then swing step. What it means for development.",
+      "img": "/img/film-room/ball-screen-footwork-banner.jpg",
+      "alt": "HoopThink graphic: Shrink the space. Swing step. Holiday, Daniels, Allen and Wade: different bodies, different eras, identical footwork.",
+      "label": "Film Room"
     }
   }
 }
