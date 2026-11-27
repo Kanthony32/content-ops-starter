@@ -23,6 +23,7 @@
       "short": "Film, analytics and the decisions behind the game.",
       "dek": "How the game works, read the way a scout reads it. Film breakdowns, analytics and the decisions behind what happens on the floor.",
       "articles": [
+        "/shell-drill-daily-vitamin/",
         "/ball-screen-footwork/",
         "/ball-screen-reads/",
         "/timeout-economy/",
@@ -100,6 +101,13 @@
     }
   ],
   "articles": {
+    "/shell-drill-daily-vitamin/": {
+      "title": "The Shell Drill Is a Daily Vitamin, Not a Preseason Install",
+      "dek": "Earl Watson calls the shell a daily vitamin. Team defense isn\u2019t installed once. It\u2019s taken every day, in small doses. The jobs, the teaching points and a five-to-eight-minute plan.",
+      "img": "/img/film-room/shell-drill-banner.jpg",
+      "alt": "HoopThink graphic: Shell Drill, The Daily Vitamin. Team defense is taken every day, in small doses. Inspired by Earl Watson.",
+      "label": "Film Room"
+    },
     "/kentucky-champions-blue-llc/": {
       "title": "Kentucky Just Turned Its Athletic Department Into a Business",
       "dek": "Champions Blue LLC is built to borrow, raise money and make deals. What it is, what it costs, and who is watching.",

@@ -136,12 +136,19 @@
       "away": "Oklahoma City Thunder",
       "home_score": 123,
       "away_score": 113
+    },
+    {
+      "date": "2026-11-25",
+      "home": "Philadelphia 76ers",
+      "away": "Miami Heat",
+      "home_score": 111,
+      "away_score": 104
     }
   ],
   "next": {
-    "start": "2026-11-25T17:00:00-05:00",
-    "home": "Philadelphia 76ers",
-    "away": "Miami Heat"
+    "start": "2026-11-27T19:30:00-05:00",
+    "home": "Indiana Pacers",
+    "away": "Philadelphia 76ers"
   },
   "updated": "2026-11-16"
 }
